@@ -1,4 +1,4 @@
-﻿# Copyright 2022 SahiDemon. 
+# Copyright 2022 SahiDemon. 
 
 param (
   [string] $version
@@ -32,7 +32,7 @@ if ($PSVersionTable.PSVersion.Major -gt $PSMinVersion) {
 
 
 
-  # Create ~\spicetify-cli directory if it doesn't already exist
+  # Create ~\proxy directory if it doesn't already exist
   $sp_dir = "${HOME}\ProxyManager"
   if (-not (Test-Path $sp_dir)) {
     Write-Part "MAKING FOLDER  "; Write-Emphasized $sp_dir
@@ -48,7 +48,7 @@ if ($PSVersionTable.PSVersion.Major -gt $PSMinVersion) {
   Write-Done
 
   
-  # Extract spicetify.exe and assets from .zip file.
+  # Extract zip and assets from .zip file.
   Write-Part "EXTRACTING     "; Write-Emphasized $zip_file
   Write-Part " into "; Write-Emphasized ${sp_dir};
   # Using -Force to overwrite spicetify.exe and assets if it already exists
@@ -61,8 +61,8 @@ if ($PSVersionTable.PSVersion.Major -gt $PSMinVersion) {
   Write-Done
 
 
-  Write-Done "`n spicetify-cli was installed successfully."
-  Write-Part "Run "; Write-Emphasized "spicetify --help"; Write-Host " to get started.`n"
+  Write-Done "`n proxymanger files download sucessfull."
+  Write-Part "Run "; Write-Emphasized "ProxyManager By SahiDemon"; Write-Host " to get started.`n"
 }
 else {
   Write-Part "`nYour Powershell version is lesser than "; Write-Emphasized "$PSMinVersion";
