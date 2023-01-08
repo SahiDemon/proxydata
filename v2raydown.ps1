@@ -62,10 +62,34 @@ if ($PSVersionTable.PSVersion.Major -gt $PSMinVersion) {
 
 
   Write-Done "`n v2ray files download sucessfull."
-  Write-Part "Run "; Write-Emphasized "ProxyManager By SahiDemon"; Write-Host " to get started.`n"
+  Write-Part "Run "; Write-Emphasized "ProxyManager.bat"; Write-Host " to get started.`n"
+
+  $Folder = 'C:\Program Files (x86)\Proxifier\Proxifier.exe'
+  if (Test-Path -Path $Folder) {
+      "Proxifier Detected"
+      Invoke-Item "${HOME}\ProxyManager\proxydata-main\newProxy.ppx"
+      "Press Yes In the following prompt to start in proxifier"
+      Invoke-Item "${HOME}\ProxyManager\proxydata-main\proxydev.bat"
+      "Close this window and contine the intallation in ProxyManager.bat"
+      Write-Part "Script By "; Write-Emphasized " SahiDemon "; Write-Host " | ProxyManager.`n"
+
+  } else {
+      "Proxifier doesn't exist."
+      "Auto Setup Proxifier In Progess"
+      Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+      choco install proxifier -y
+      Write-Part "ProxyManager "; Write-Emphasized "By SahiDemon"; Write-Host " Run ProxyManager.Bat.`n"
+      Invoke-Item "${HOME}\ProxyManager\proxydata-main\newProxy.ppx"
+      "Press Yes In the following prompt to start in proxifier"
+      Invoke-Item "${HOME}\ProxyManager\proxydata-main\proxydev.bat"
+      "Close this window and contine the intallation in ProxyManager.bat"
+      Write-Part "Script By "; Write-Emphasized " SahiDemon "; Write-Host " | ProxyManager.`n"
+  }
+
 }
 else {
   Write-Part "`nYour Powershell version is lesser than "; Write-Emphasized "$PSMinVersion";
   Write-Part "`nPlease, update your Powershell downloading the "; Write-Emphasized "'Windows Management Framework'"; Write-Part " greater than "; Write-Emphasized "$PSMinVersion"
 }
 
+ 
