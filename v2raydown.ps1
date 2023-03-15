@@ -1,4 +1,4 @@
-# Copyright 2022 SahiDemon|SahinduGayanuka. 
+# Copyright 2022 SahiDemon. 
 
 param (
   [string] $version
@@ -42,7 +42,7 @@ if ($PSVersionTable.PSVersion.Major -gt $PSMinVersion) {
 
   # Download release.
   $zip_file = "${sp_dir}\v2rayN.zip"
-  $download_uri = "https://github.com/SahiDemon/ProxyManager/blob/main/v2rayN-Core.rar"
+  $download_uri = "https://github.com/2dust/v2rayN/releases/download/5.38/v2rayN-Core.zip"
   Write-Part "DOWNLOADING    "; Write-Emphasized $download_uri
   Invoke-WebRequest -Uri $download_uri -UseBasicParsing -OutFile $zip_file
   Write-Done
@@ -68,26 +68,22 @@ if ($PSVersionTable.PSVersion.Major -gt $PSMinVersion) {
   if (Test-Path -Path $Folder) {
       "Proxifier Detected"
       Invoke-Item "${HOME}\ProxyManager\proxydata-main\newProxy.ppx"
-      "Press 'OK' In the following prompt to load pre-built config into proxifier"
-      Start-Sleep -Seconds 3
+      "Press Yes In the following prompt to start in proxifier"
       Invoke-Item "${HOME}\ProxyManager\proxydata-main\proxydev.bat"
-      "Close this window and continue the intallation in ProxyManager"
-      Start-Sleep -Seconds 2
-      Write-Part "Script By "; Write-Emphasized "SahiDemon|SahinduGayanuka "; Write-Host "| ProxyManager.`n"
+      "Close this window and contine the intallation in ProxyManager.bat"
+      Write-Part "Script By "; Write-Emphasized " SahiDemon "; Write-Host " | ProxyManager.`n"
 
   } else {
       "Proxifier doesn't exist."
       "Auto Setup Proxifier In Progess"
       Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
       choco install proxifier -y
-      Write-Part "ProxyManager "; Write-Emphasized "By SahiDemon|SahinduGayanuka"; Write-Host " Run ProxyManager.Bat.`n"
+      Write-Part "ProxyManager "; Write-Emphasized "By SahiDemon"; Write-Host " Run ProxyManager.Bat.`n"
       Invoke-Item "${HOME}\ProxyManager\proxydata-main\newProxy.ppx"
-      "Press 'OK' In the following prompt to load pre-built config into proxifier"
-      Start-Sleep -Seconds 3
+      "Press Yes In the following prompt to start in proxifier"
       Invoke-Item "${HOME}\ProxyManager\proxydata-main\proxydev.bat"
-      "Close this window and continue the intallation in ProxyManager"
-      Start-Sleep -Seconds 2
-      Write-Part "Script By"; Write-Emphasized " SahiDemon|SahinduGayanuka"; Write-Host " | ProxyManager.`n"
+      "Close this window and contine the intallation in ProxyManager.bat"
+      Write-Part "Script By "; Write-Emphasized " SahiDemon "; Write-Host " | ProxyManager.`n"
   }
 
 }
