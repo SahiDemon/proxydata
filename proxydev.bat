@@ -1,3 +1,5 @@
+::#region Start of Script
+call proxyintro.bat
 @echo off
 @setlocal enableextensions
 @cd /d "%~dp0"
@@ -7,17 +9,19 @@ Set "DownSpeed=Download: 0.00 MB/s"
 set "Latecy=Latency: 00.00 ms"
 Color 3F & MODE con:cols=80 lines=7
 title Proxy Manager
-echo Configuring The Proxy..
+set message=Initializing Proxy
+call :loading
 timeout 2 >nul
 if exist config.sahi goto loadtrue
 if not exist config.sahi goto loadfail
 
-
+::#endregion
+::#region Config Check
 :loadfail
 cls
 echo Folder does not exist the configuration. Redirecting To installation
 timeout 3 >nul
-goto :setdir
+goto :smartscan
 
 :loadtrue
 findstr "v2rayN.exe proxifier" config.sahi > nul
@@ -33,24 +37,77 @@ echo Config is corrupted plese re-config the configuration
 timeout 3 >nul
 goto :reset
 )
+::#endregion
+::#region SmartScan file locations
+:smartscan
+cls
+set message=Auto Deteminding File Locations..
+call :loading
+timeout 1 >nul
 
+set files="%HOMEDRIVE%\Program Files (x86)\Proxifier\Proxifier.exe" "%USERPROFILE%\ProxyManager\proxydata-main\httping.exe" "%USERPROFILE%\ProxyManager\proxydata-main\ERRORproxy.mp3" "%USERPROFILE%\ProxyManager\proxydata-main\proxySuccess.mp3" "%USERPROFILE%\ProxyManager\v2rayN\v2rayN-Core\v2rayN.exe"
 
+set missing=
 
+for %%f in (%files%) do (
+  if not exist "%%f" (
+    set missing=%missing% "%%f"
+  )
+)
+
+if defined missing (
+  echo script Can't proceed because these files are missing: %missing%
+  echo Redirecting to mannual selection
+  set message=Automatic Detection failed! Redirecting...
+  call :loading
+  timeout 2 >nul
+  goto :setdir
+)
+
+:autofilesetup
+@cd /d "%~dp0"
+( echo Set Sound = CreateObject("WMPlayer.OCX.7"^)
+  echo Sound.URL = "%USERPROFILE%\ProxyManager\proxydata-main\proxySuccess.mp3"
+  echo Sound.Controls.play
+  echo do while Sound.currentmedia.duration = 0
+  echo wscript.sleep 100
+  echo loop
+  echo wscript.sleep (int(Sound.currentmedia.duration^)+1^)*1000) >soundpass.vbs
+)
+
+( echo Set Sound = CreateObject("WMPlayer.OCX.7"^)
+  echo Sound.URL = "%USERPROFILE%\ProxyManager\proxydata-main\ERRORproxy.mp3"
+  echo Sound.Controls.play
+  echo do while Sound.currentmedia.duration = 0
+  echo wscript.sleep 100
+  echo loop
+  echo wscript.sleep (int(Sound.currentmedia.duration^)+1^)*1000) >soundfail.vbs
+)
+echo Config Saved Successfully!
+timeout 2 >nul
+(
+echo "%USERPROFILE%\ProxyManager\v2rayN\v2rayN-Core\v2rayN.exe"_"%HOMEDRIVE%\Program Files (x86)\Proxifier\Proxifier.exe"_"%USERPROFILE%\ProxyManager\proxydata-main\Gecho.exe"_"%USERPROFILE%\ProxyManager\proxydata-main\httping.exe"_"%USERPROFILE%\ProxyManager\proxydata-main\speedtest.exe"
+)>config.sahi
+goto :create
+
+::#endregion
+::#region manual selection
 :setdir
 cls
 :setv
-cls 
+cls
+echo We Recommended Automatic Selection! Note: YOU ARE OVERRIDING DEFAULTS THIS MAY CAUSE ERRORS.
+timeout 2 >nul
 Echo Select v2rayN.exe Here!
 set cmd=Add-Type -AssemblyName System.Windows.Forms;$f=new-object                 Windows.Forms.OpenFileDialog;$f.InitialDirectory=        [environment]::GetFolderPath('Desktop');$f.Filter='v2rayN(*.exe)^|*.exe^|All         Files(*.*)^|*.*';$f.Multiselect=$true;[void]$f.ShowDialog();if($f.Multiselect)        {$f.FileNames}else{$f.FileName}
 set pwshcmd=powershell -noprofile -command "&{%cmd%}"
-for /f "tokens=* delims=" %%I in ('%pwshcmd%') do call :sum "%%I" ret
+for /f "tokens=* delims=" %%I in ('%pwshcmd%') do call :sum1 "%%I" ret
 pause
-exit /B
-:sum [mud] [ret]
+:sum1 
 echo File Selected: "%~1"
 set File1=%File1% "%~1"
 set ret=%File1%
-exit /B
+
 set /P o=   Do you want to proceed (Y/N)?
 if /I "%o%" EQU "Y" goto :setp
 if /I "%o%" EQU "N" goto :setv
@@ -60,38 +117,37 @@ cls
 Echo Select Proxifer.exe Here!
 set cmd=Add-Type -AssemblyName System.Windows.Forms;$f=new-object                 Windows.Forms.OpenFileDialog;$f.InitialDirectory=        [environment]::GetFolderPath('Desktop');$f.Filter='Proxifer(*.exe)^|*.exe^|All         Files(*.*)^|*.*';$f.Multiselect=$true;[void]$f.ShowDialog();if($f.Multiselect)        {$f.FileNames}else{$f.FileName}
 set pwshcmd=powershell -noprofile -command "&{%cmd%}"
-for /f "tokens=* delims=" %%I in ('%pwshcmd%') do call :sum "%%I" ret
-pause
-exit /B
-:sum [mud] [ret]
+for /f "tokens=* delims=" %%I in ('%pwshcmd%') do call :sum2 "%%I" ret
+
+:sum2 
 echo File Selected: "%~1"
 set File2=%File2% "%~1"
 set ret=%File2%
 set /P o=   Do you want to proceed (Y/N)?
-if /I "%o%" EQU "Y" goto :soundy
+if /I "%o%" EQU "Y" goto :finaldone
 if /I "%o%" EQU "N" goto :setp
 
 
-:soundy
-cls 
-Echo Drag ^& Drop "Success" Sound Effect Here!
-set /p file3="Enter the file path for Success Sound : "
-cls 
-Echo Drag ^& Drop "Failed" Sound Effect Here!
-set /p file4="Enter the file path for Failed Sound : "
-cls
-echo "Success" Sound Effect="%file3%"
-echo "Failed" Sound Effect="%file4%"
-set /P o=   Do you want to proceed (Y/N)?
-if /I "%o%" EQU "Y" goto :finaldone
-if /I "%o%" EQU "N" goto :soundy
+@REM :soundy
+@REM cls 
+@REM Echo Drag ^& Drop "Success" Sound Effect Here!
+@REM set /p file3="Enter the file path for Success Sound : "
+@REM cls 
+@REM Echo Drag ^& Drop "Failed" Sound Effect Here!
+@REM set /p file4="Enter the file path for Failed Sound : "
+@REM cls
+@REM echo "Success" Sound Effect="%file3%"
+@REM echo "Failed" Sound Effect="%file4%"
+@REM set /P o=   Do you want to proceed (Y/N)?
+@REM if /I "%o%" EQU "Y" goto :finaldone
+@REM if /I "%o%" EQU "N" goto :soundy
 
 
 
 :finaldone
 @cd /d "%~dp0"
 ( echo Set Sound = CreateObject("WMPlayer.OCX.7"^)
-  echo Sound.URL =%file3%
+  echo Sound.URL = "%cd%\effectpass.mp3"
   echo Sound.Controls.play
   echo do while Sound.currentmedia.duration = 0
   echo wscript.sleep 100
@@ -100,7 +156,7 @@ if /I "%o%" EQU "N" goto :soundy
 )
 
 ( echo Set Sound = CreateObject("WMPlayer.OCX.7"^)
-  echo Sound.URL =%file4%
+  echo Sound.URL = "%cd%\effectfail.mp3"
   echo Sound.Controls.play
   echo do while Sound.currentmedia.duration = 0
   echo wscript.sleep 100
@@ -113,6 +169,9 @@ timeout 2 >nul
 echo %file1%_%file2%
 )>config.sahi
 
+::#endregion
+::#region create extra files
+
 :create
 ( echo Set WshShell = CreateObject^("WScript.Shell"^) 
   echo WshShell.Run chr^(34^) ^& "sptest.bat" ^& Chr^(34^), 0
@@ -121,15 +180,30 @@ echo %file1%_%file2%
 
 (echo speedtest.exe -u MB/s  ^> restultspeed.sahi)>sptest.bat
 
+@cd /d "%~dp0"
+(
+ echo set WshShell = WScript.CreateObject("WScript.Shell"^)
+ echo strDesktop = WshShell.SpecialFolders("Desktop"^)
+ echo wscript.echo(strDesktop^)
+)>findDesktop.vbs
 
 
 
+FOR /F "usebackq delims=" %%i in (`cscript findDesktop.vbs`) DO SET DESKTOPDIR=%%i
+set TARGET='%USERPROFILE%\ProxyManager\proxydata-main\proxydev.bat'
+set SHORTCUT='%DESKTOPDIR%\ProxyManger.lnk'
+set PWS=powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile
 
+%PWS% -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(%SHORTCUT%); $S.TargetPath = %TARGET%; $S.Save()"
+
+::#endregion
+::#region Find Existing applications
 :resume
 cls
 tasklist /FI "IMAGENAME eq Proxifier.exe" 2>NUL | find /I /N "Proxifier.exe">NUL
 if "%ERRORLEVEL%"=="1" goto start
-Echo Searching For Applications..
+set message=Searching For Applications
+call :loading
 timeout 2 >nul
 goto :detected1
 
@@ -141,8 +215,9 @@ goto detectedfull
 
 :detectedfull
 cls
-Echo Detected Existing Applications. Redirecting...
-timeout 3 >nul
+Echo Detected Existing Applications.
+set message=Redirecting
+call :loading
 :choice
 cls
 :stopcome
@@ -154,6 +229,8 @@ FOR /F "tokens=1-4 USEBACKQ" %%A IN (`findstr "Download" restultspeed.sahi`) DO 
 SET DownSpeed=%%B %%C %%D
 )
 
+::#endregion
+::#region MainMenu
 color 07 & mode con:cols=98 lines=34
 echo.  
 echo.                                           
@@ -186,7 +263,7 @@ call gecho "                 |      <Cyan>[6]</> Credits                        
 echo                  ^|                                                               ^|
 echo                  ^|_______________________________________________________________^|
 echo.          
-choice /C:12345678 /N /M ">                   Enter Your Choice in the Keyboard [1,2,3,4,5,6,7,8] : "
+choice /C:12345678 /N /t 5 /D 7 /M ">                   Enter Your Choice in the Keyboard [1,2,3,4,5,6,7,8] : "    
 
 
 if errorlevel  8 goto :exit
@@ -197,7 +274,8 @@ if errorlevel  4 goto :check
 if errorlevel  3 goto :kill
 if errorlevel  2 goto :
 if errorlevel  1 goto :
-
+::#endregion
+::#region SubMenu
 :Extras
 cls 
 color 07 & mode con:cols=98 lines=34
@@ -232,7 +310,7 @@ call gecho "                 |      <Cyan>[6]</> Credits                        
 echo                  ^|                                                               ^|
 echo                  ^|_______________________________________________________________^|
 echo:          
-choice /C:123456789 /N /M ">                   Enter Your Choice in the Keyboard [1,2,3,4,5,6,7,8,9] : "
+choice /C:123456789 /N /t 5 /D 7 /M ">                   Enter Your Choice in the Keyboard [1,2,3,4,5,6,7,8,9] : "    
 
 if errorlevel  9 goto :exit
 if errorlevel  8 goto :soundy
@@ -245,8 +323,8 @@ if errorlevel  2 goto :DownSpeed
 if errorlevel  1 goto :add
 
 
-
-
+::#endregion
+::#region WIP
 :manualspeed
 if  exist "speedtest.exe" (
   start sptest.vbs
@@ -265,9 +343,8 @@ cls
 goto :devmode
 
 
-
-
-
+::#endregion
+::#region StartProxyApps
 :Start
 Color 3F & MODE con:cols=80 lines=7
 TASKKILL /F /IM Proxifier.exe
@@ -293,7 +370,8 @@ echo Applications Not Detected! holding
 timeout 5 >nul
 goto start
 
-
+::#endregion
+::#region NetworkCheck
 :networkcheck
 if exist "sptest.bat" (
     if exist "sptest.vbs" (
@@ -350,6 +428,9 @@ Echo Ping Sucuess! Redirecting to main menu..
 timeout 3 >nul
 goto :choice
 
+
+
+
 :failping
 @echo off
 color 70  & mode con:cols=80 lines=10
@@ -358,8 +439,8 @@ Echo Ping Failed or type a correct typo! Redirecting to main menu..
 timeout 3 >nul
 goto :choice
 
-
-
+::#endregion
+::#region Fails and Debugging
 
 :failcheck
 cls
@@ -389,7 +470,6 @@ goto retry
 
 
 
-
 :pass
 color B0
 cls
@@ -399,11 +479,11 @@ echo Proxy Success! Redirecting to Menu
 timeout 4 >nul
 goto stopcome
 
-
-
+::#endregion
+::#region Extra Calls/Colors 
 
 :passchoice
-call Gecho.exe "                 |      <Green>PROXY MANAGER                        <blue>Status:<green> Active </>     |  "
+call gecho "                 |      <Green>PROXY MANAGER                        <blue>Status:<green> Active </>     |  "
 SET "display=Active"
 SET "color=green"
 
@@ -420,7 +500,7 @@ exit /B 0
 
 
 :failchoice
-call Gecho.exe "                 |      <Magenta>PROXY MANAGER                      <blue>Status:<red> Offline</>       |  "
+call gecho "                 |      <Magenta>PROXY MANAGER                      <blue>Status:<red> Offline</>       |  "
 SET "display=Offline"
 SET "color=DarkRed"
 
@@ -438,7 +518,7 @@ exit /B 0
 
 
 :nochoice
-call Gecho.exe "                 |      <Magenta>PROXY MANAGER                          <blue>Status:<darkyellow> Idle </>     |"
+call gecho "                 |      <Magenta>PROXY MANAGER                          <blue>Status:<darkyellow> Idle </>     |"
 SET "display=Not Detected"
 SET "color=red"
 
@@ -558,8 +638,8 @@ call :startall
 exit /B 0
 
 
-
-
+::#endregion
+::#region config Vars
 
 :startall
 @cd /d "%~dp0"
@@ -577,6 +657,13 @@ start "" %%a
 )
 exit /B 0
 
+:gecho
+@cd /d "%~dp0"
+for /f "tokens=1,2,3,4 delims=_" %%a in (config.sahi) do (
+start "" %%c
+)
+exit /B 0
+
 
 :soundscucess
 @cd /d "%~dp0"
@@ -589,7 +676,6 @@ start /min soundfail.vbs
 exit /B 0
 
  
-
 :reset
 cls
 Color 4F & MODE con:cols=80 lines=10
@@ -599,7 +685,65 @@ timeout 5 >nul
 goto :setdir
 
 
+:loading
+rem Set the counter variable
+set counter=0
 
+:loopforload
+set delay=200
+set ms1counter=0
+set ms2counter=0
+set ms3counter=0
+set ms4counter=0
+
+:ms1
+cls
+echo (^>'-')^> ^| %message%.
+ping 127.0.0.1 -n 1 -w %delay% > nul
+set /a ms1counter = %ms1counter%+1
+if %ms1counter% EQU 10  goto ms2
+
+goto :ms1
+
+:ms2
+cls
+echo ^<('-'^<) / %message%..
+ping 127.0.0.1 -n 1 -w %delay% > nul
+set /a ms2counter = %ms2counter%+1
+if %ms2counter% EQU 10  goto ms3
+
+goto :ms2
+
+:ms3
+cls
+echo (^>'-')^> - %message%...
+ping 127.0.0.1 -n 1 -w %delay% > nul
+set /a ms3counter = %ms3counter%+1
+if %ms3counter% EQU 10  goto ms4
+
+goto :ms3
+
+:ms4 
+cls 
+echo ^<('-'^<) \ %message%.... 
+ping 127.0.0.1 -n 1 -w %delay% > nul 
+set /a ms4counter = %ms4counter%+1 
+if %ms4counter% EQU  10 goto :rest 
+
+goto :ms4 
+
+:rest 
+cls 
+rem Increment the counter 
+set /a counter=%counter%+1 
+
+rem Check if the counter has reached 20 
+if %counter% LSS 5 goto loopforload 
+
+exit /B 0 
+
+::#endregion
+::#region Credits
 :Credits
 cls
 @for /f %%i in ('^<"%~f0" find/c /v ""') do @(
@@ -636,3 +780,4 @@ cls
                                       ========================
                                               SAHIDEMON
                                           END OF CREDITS.
+::#endregion
