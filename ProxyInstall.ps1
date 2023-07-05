@@ -26,12 +26,18 @@ $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIde
 
 # Check if the current PowerShell session has administrative privileges
 if (-not $isAdmin) {
-    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+    $arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
+    Start-Process powershell.exe -ArgumentList $arguments -Verb RunAs
+
+    # Add a delay to allow time for the UAC prompt
+    Start-Sleep -Seconds 5
+
     Exit
 }
 
 # Code requiring admin privileges goes here
 Write-Host "This script is running with administrative privileges."
+
 
 $folderPath = "$env:USERPROFILE\AppData\Roaming\Ookla\Speedtest CLI"
 $filePath = "$folderPath\speedtest-cli.ini"
@@ -146,3 +152,13 @@ else {
   Write-Part "`nYour PowerShell version is lower than "; Write-Emphasized "$PSMinVersion";
   Write-Part "`nPlease update your PowerShell by downloading the "; Write-Emphasized "'Windows Management Framework'"; Write-Part " greater than "; Write-Emphasized "$PSMinVersion"
 }
+
+
+
+
+
+
+
+
+
+
