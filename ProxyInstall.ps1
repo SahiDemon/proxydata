@@ -33,7 +33,7 @@ if (-not $isAdmin) {
 # Code requiring admin privileges goes here
 Write-Host "This script is running with administrative privileges."
 
-$folderPath = "C:\Users\Administrator\AppData\Roaming\Ookla\Speedtest CLI"
+$folderPath = "$env:USERPROFILE\AppData\Roaming\Ookla\Speedtest CLI"
 $filePath = "$folderPath\speedtest-cli.ini"
 $content = @"
 [Settings]
