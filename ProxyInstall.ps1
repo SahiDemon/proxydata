@@ -24,8 +24,7 @@ function Write-Done {
   Write-Host "OK" -ForegroundColor "Green"
 }
 
-Write-Host "Copyright 2023 SahiDemon. "
-Write-Host "Script By SahinduGayanuka. "
+Write-Host "Copyright 2023 SahiDemon - Script By SahinduGayanuka. "
 # Check if running with admin privileges
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
