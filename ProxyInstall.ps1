@@ -1,3 +1,5 @@
+# Copyright 2023 SahiDemon|SahinduGayanuka. 
+
 param (
   [string] $version
 )
@@ -22,22 +24,22 @@ function Write-Done {
   Write-Host "OK" -ForegroundColor "Green"
 }
 
-$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+Write-Host "Copyright 2023 SahiDemon. "
+Write-Host "Script By SahinduGayanuka. "
+# Check if running with admin privileges
+$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+$isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
-# Check if the current PowerShell session has administrative privileges
 if (-not $isAdmin) {
-    $scriptPath = $MyInvocation.MyCommand.Path
-    $arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$scriptPath`""
-
-    # Start a new PowerShell process with elevated privileges
-    Start-Process powershell.exe -ArgumentList $arguments -Verb RunAs
-
-    # Exit the current session
-    Exit
+    # Not running as admin, prompt the user to run with elevated privileges
+    Write-Host "This script requires administrative privileges. Please run it as an administrator."
+    pause
+    exit
 }
 
-# Code requiring admin privileges goes here
-Write-Host "This script is running with administrative privileges."
+# Code to be executed with administrative privileges goes here
+Write-Host "Running with administrative privileges!"
+
 
 
 $folderPath = "$env:USERPROFILE\AppData\Roaming\Ookla\Speedtest CLI"
