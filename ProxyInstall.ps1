@@ -22,19 +22,19 @@ function Write-Done {
   Write-Host "OK" -ForegroundColor "Green"
 }
 
-# Check if running with admin privileges
-# Check if running with admin privileges
-$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-$isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
+# Check if the current PowerShell session has administrative privileges
 if (-not $isAdmin) {
-    # Not running as admin, prompt the user to run with elevated privileges
     $scriptPath = $MyInvocation.MyCommand.Path
     $arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$scriptPath`""
-    Start-Process -FilePath "powershell.exe" -Verb RunAs -ArgumentList $arguments
-}
-else {
 
+    # Start a new PowerShell process with elevated privileges
+    Start-Process powershell.exe -ArgumentList $arguments -Verb RunAs
+
+    # Exit the current session
+    Exit
+}
 
 # Code requiring admin privileges goes here
 Write-Host "This script is running with administrative privileges."
@@ -157,7 +157,7 @@ else {
 
 
 
-}
+
 
 
 
