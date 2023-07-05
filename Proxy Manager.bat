@@ -45,6 +45,7 @@ goto :reset
 ::#region SmartScan file locations
 :smartscan
 cls
+Color 4F & MODE con:cols=80 lines=10
 set message=Auto Deteminding File Locations..
 call :loading
 timeout 1 >nul
@@ -206,16 +207,13 @@ echo %file1%_%file2%
 
 
 
-
-
-FOR /F "usebackq delims=" %%i in (`cscript findDesktop.vbs`) DO SET "DESKTOPDIR=%%i"
-set "TARGET=%USERPROFILE%\ProxyManager\proxydata-main\Proxy Manager.bat"
-set "SHORTCUT=%DESKTOPDIR%\ProxyManager.lnk"
+FOR /F "usebackq delims=" %%i in (`cscript findDesktop.vbs`) DO SET DESKTOPDIR=%%i
+set TARGET='%USERPROFILE%\ProxyManager\proxydata-main\Proxy Manager.bat'
+set SHORTCUT='%DESKTOPDIR%\ProxyManager.lnk'
 set "ICONPATH=%USERPROFILE%\ProxyManager\proxydata-main\vpn.ico"
-set "STARTINPATH=%USERPROFILE%\ProxyManager\proxydata-main"
 set PWS=powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile
 
-%PWS% -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(%SHORTCUT%); $S.TargetPath = %TARGET%; $S.IconLocation = '%ICONPATH%'; $S.WorkingDirectory = '%STARTINPATH%'; $S.Save()"
+%PWS% -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(%SHORTCUT%); $S.TargetPath = %TARGET%; $S.IconLocation = '%ICONPATH%'; $S.WorkingDirectory = '%USERPROFILE%\ProxyManager\proxydata-main\'; $S.Save()"
 
 
 ::#endregion
@@ -411,10 +409,23 @@ if "%ERRORLEVEL%"=="1" goto noded
 goto :networkcheck
 
 :noded
-cls
-echo Applications Not Detected! holding
-timeout 5 >nul
-goto start
+set MAX_ATTEMPTS=3
+set CURRENT_ATTEMPT=0
+
+:input_attempt
+set /A CURRENT_ATTEMPT+=1
+
+
+if %CURRENT_ATTEMPT% EQU %MAX_ATTEMPTS% (
+     goto :start
+     timeout 5 >nul
+) else (
+     echo Applications Launch timeout. Try Resetting the config.
+     timeout 3 >nul
+)
+
+
+
 
 
 
@@ -738,7 +749,7 @@ Color 4F & MODE con:cols=80 lines=10
 echo Resetting the configuration..
 del config.sahi
 timeout 5 >nul
-goto :autofilesetup
+goto :smartscan
 
 
 
