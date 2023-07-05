@@ -6,7 +6,7 @@ call proxyintro.bat
 @cd /d "%~dp0"
 set "original_dir=%cd%"
 SET /a "St=0"
-set sound=false
+set soundConfigFile=sound.config
 SET /a "passfail=0"
 Set "DownSpeed=Download: 0.00 MB/s"
 set "Latecy=Latency: 00.00 ms"
@@ -209,9 +209,10 @@ echo %file1%_%file2%
 FOR /F "usebackq delims=" %%i in (`cscript findDesktop.vbs`) DO SET DESKTOPDIR=%%i
 set TARGET='%USERPROFILE%\ProxyManager\proxydata-main\Proxy Manager.bat'
 set SHORTCUT='%DESKTOPDIR%\ProxyManager.lnk'
+set "ICONPATH=%USERPROFILE%\ProxyManager\proxydata-main\vpn.ico"
 set PWS=powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile
 
-%PWS% -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(%SHORTCUT%); $S.TargetPath = %TARGET%; $S.Save()"
+%PWS% -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(%SHORTCUT%); $S.TargetPath = %TARGET%; $S.IconLocation = '%ICONPATH%'; $S.Save()"
 
 ::#endregion
 ::#region Find Existing applications
@@ -727,14 +728,14 @@ exit /B 0
 
 :soundscucess
 @cd /d "%~dp0"
-if "%sound%"=="false" (
-  start /min soundpass.vbs
+if not exist "%soundConfigFile%" (
+    start /min soundpass.vbs
 )
 exit /B 0
 
 :soundfail
 @cd /d "%~dp0"
-if "%sound%"=="false" (
+if not exist "%soundConfigFile%" (
 start /min soundfail.vbs
 )
 exit /B 0
@@ -788,14 +789,14 @@ if /I "%e%" EQU "N" goto :falsesound
 cls
 echo Sounds Muted..
 timeout 2 >nul
-set "sound=true"
+(echo sound muted)>sound.config
 goto :choice
 
 :falsesound
 cls
 echo Sounds Unmuted..
 timeout 2 >nul
-set "sound=false"
+del sound.config
 goto :choice
 
 
