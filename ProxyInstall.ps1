@@ -33,7 +33,7 @@ $arguments = "-NoProfile -ExecutionPolicy Bypass -Command `"& { iwr -useb $url |
 
 if (-not $isAdmin) {
     # Not running as admin, prompt the user to run with elevated privileges
-    Write-Host "This script requires administrative privileges. Please run it as an administrator."
+    Write-Host "This script requires administrative privileges. Please Grant Access to proceed."
     # Restart the script from the specified URL as an administrator
     Start-Process -FilePath "powershell.exe" -Verb RunAs -ArgumentList $arguments
 
