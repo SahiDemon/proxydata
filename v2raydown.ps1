@@ -1,3 +1,8 @@
+# Copyright 2022 SahiDemon|SahinduGayanuka. 
+
+
+# Check if the current PowerShell session has administrative privileges
+
 param (
   [string] $version
 )
@@ -22,10 +27,7 @@ function Write-Done {
   Write-Host "OK" -ForegroundColor "Green"
 }
 
-# Copyright 2022 SahiDemon|SahinduGayanuka. 
 
-
-# Check if the current PowerShell session has administrative privileges
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
 # If not running as administrator, relaunch the script with elevated privileges
