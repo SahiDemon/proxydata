@@ -1,9 +1,12 @@
 ::#region Start of Script
-call proxyintro.bat
+
 @echo off
+call proxyintro.bat
 @setlocal enableextensions
 @cd /d "%~dp0"
+set "original_dir=%cd%"
 SET /a "St=0"
+set sound=false
 SET /a "passfail=0"
 Set "DownSpeed=Download: 0.00 MB/s"
 set "Latecy=Latency: 00.00 ms"
@@ -29,6 +32,7 @@ findstr "v2rayN.exe proxifier" config.sahi > nul
 if %errorlevel%==0 (
 cls
 echo Config Loaded Successfully!
+
 timeout 3 >nul
 goto :resume
 ) else (
@@ -360,6 +364,7 @@ goto :devmode
 
 :forced
 cls
+Color 3F & MODE con:cols=80 lines=7
 echo Make sure to kill the proxy before exiting the script! 
 timeout 2 >nul
 set message=Initializing Proxy Applications
@@ -368,9 +373,9 @@ timeout 1 >nul
 TASKKILL /F /IM Proxifier.exe
 TASKKILL /F /IM v2rayN.exe
 call :startv
-reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f
-reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyOverride /t REG_SZ /d "localhost;127.*;10.*;172.16.*;172.17.*;172.18.*;172.19.*;172.20.*;172.21.*;172.22.*;172.23.*;172.24.*;172.25.*;172.26.*;172.27.*;172.28.*;172.29.*;172.30.*;172.31.*;192.168.*" /f
-reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /t REG_SZ /d "127.0.0.1:10809" /f
+cd /d "%original_dir%"
+call :regrun
+cls
 echo Deteminding the proxy state..
 timeout 2 >nul
 goto :networkcheck
@@ -389,7 +394,6 @@ cls
 set message=Initializing Proxy Applications
 call :loading
 timeout 3 >nul
-reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f
 call :startall
 :check
 Color 3F & MODE con:cols=80 lines=7
@@ -596,6 +600,7 @@ Echo Requesting To Restarting The Proxy...
 timeout 3 >nul
 TASKKILL /F /IM Proxifier.exe
 TASKKILL /F /IM v2rayN.exe
+call :regkill
 call :startall
 Echo Success! Redirecting...
 timeout 3 >nul
@@ -608,9 +613,10 @@ cls
 Color 4F & MODE con:cols=80 lines=10
 Echo Requesting To Kill The Proxy...
 timeout 3 >nul
-reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f
+call :regkill
 TASKKILL /F /IM Proxifier.exe
 TASKKILL /F /IM v2rayN.exe
+cls
 Echo Success! Redirecting...
 timeout 3 >nul
 cls
@@ -619,7 +625,7 @@ goto choice
 :Exit
 cls
 Color 4F & MODE con:cols=80 lines=10
-reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f
+call :regkill
 Echo Exiting The Script..
 timeout 3 >nul
 Exit
@@ -721,12 +727,16 @@ exit /B 0
 
 :soundscucess
 @cd /d "%~dp0"
-start /min soundpass.vbs
+if "%sound%"=="false" (
+  start /min soundpass.vbs
+)
 exit /B 0
 
 :soundfail
 @cd /d "%~dp0"
+if "%sound%"=="false" (
 start /min soundfail.vbs
+)
 exit /B 0
 
  
@@ -737,6 +747,58 @@ echo Resetting the configuration..
 del config.sahi
 timeout 5 >nul
 goto :autofilesetup
+
+
+
+:DownSpeed
+cls
+color 07 & mode con:cols=98 lines=34
+@echo off
+call speedtest.exe
+pause
+cls && goto :choice
+
+
+
+
+
+
+:regrun
+cls
+reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyOverride /t REG_SZ /d "localhost;127.*;10.*;172.16.*;172.17.*;172.18.*;172.19.*;172.20.*;172.21.*;172.22.*;172.23.*;172.24.*;172.25.*;172.26.*;172.27.*;172.28.*;172.29.*;172.30.*;172.31.*;192.168.*" /f
+reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /t REG_SZ /d "127.0.0.1:10809" /f
+reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f
+exit /B 0
+
+
+:regkill
+reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f
+exit /B 0
+
+
+
+:Mute
+cls
+Color 4F & MODE con:cols=80 lines=10
+set /P e=   Do you want to Mute Sounds (Y/N)?
+if /I "%e%" EQU "Y" goto :truesound
+if /I "%e%" EQU "N" goto :falsesound
+
+:truesound
+cls
+echo Sounds Muted..
+timeout 2 >nul
+set "sound=true"
+goto :choice
+
+:falsesound
+cls
+echo Sounds Unmuted..
+timeout 2 >nul
+set "sound=false"
+goto :choice
+
+
 
 
 :loading
