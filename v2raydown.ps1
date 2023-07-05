@@ -108,7 +108,7 @@ if ($PSVersionTable.PSVersion.Major -gt $PSMinVersion) {
       "Proxifier Detected"
       Invoke-Item "${HOME}\ProxyManager\proxydata-main\newProxy.ppx"
       "Press 'OK' In the following prompt to load pre-built config into proxifier"
-      Start-Sleep -Seconds 3
+      Start-Sleep -Seconds 7
       Set-ItemProperty -Path 'HKCU:\Environment' -Name 'Path' -Value "$($env:Path);$($env:USERPROFILE)\ProxyManager\proxydata-main\httping.exe"
       Invoke-Item "${HOME}\ProxyManager\proxydata-main\Proxy Manager.bat"
       "Close this window and continue the intallation in ProxyManager"
