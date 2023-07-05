@@ -206,13 +206,17 @@ echo %file1%_%file2%
 
 
 
-FOR /F "usebackq delims=" %%i in (`cscript findDesktop.vbs`) DO SET DESKTOPDIR=%%i
-set TARGET='%USERPROFILE%\ProxyManager\proxydata-main\Proxy Manager.bat'
-set SHORTCUT='%DESKTOPDIR%\ProxyManager.lnk'
+
+
+FOR /F "usebackq delims=" %%i in (`cscript findDesktop.vbs`) DO SET "DESKTOPDIR=%%i"
+set "TARGET=%USERPROFILE%\ProxyManager\proxydata-main\Proxy Manager.bat"
+set "SHORTCUT=%DESKTOPDIR%\ProxyManager.lnk"
 set "ICONPATH=%USERPROFILE%\ProxyManager\proxydata-main\vpn.ico"
+set "STARTINPATH=%USERPROFILE%\ProxyManager\proxydata-main"
 set PWS=powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile
 
-%PWS% -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(%SHORTCUT%); $S.TargetPath = %TARGET%; $S.IconLocation = '%ICONPATH%'; $S.Save()"
+%PWS% -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(%SHORTCUT%); $S.TargetPath = %TARGET%; $S.IconLocation = '%ICONPATH%'; $S.WorkingDirectory = '%STARTINPATH%'; $S.Save()"
+
 
 ::#endregion
 ::#region Find Existing applications
@@ -411,8 +415,6 @@ cls
 echo Applications Not Detected! holding
 timeout 5 >nul
 goto start
-
-
 
 
 
