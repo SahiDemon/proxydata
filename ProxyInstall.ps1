@@ -28,15 +28,13 @@ Write-Host "Copyright 2023 SahiDemon - Script By SahinduGayanuka. "
 # Check if running with admin privileges
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+$url = "https://raw.githubusercontent.com/SahiDemon/proxydata/main/ProxyInstall.ps1"
+$arguments = "-NoProfile -ExecutionPolicy Bypass -Command `"& { iwr -useb $url | iex }`""
 
 if (-not $isAdmin) {
     # Not running as admin, prompt the user to run with elevated privileges
     Write-Host "This script requires administrative privileges. Please run it as an administrator."
-    pause
     # Restart the script from the specified URL as an administrator
-    $url = "https://raw.githubusercontent.com/SahiDemon/proxydata/main/ProxyInstall.ps1"
-    $arguments = "-NoProfile -ExecutionPolicy Bypass -Command `"& { iwr -useb $url | iex }`""
-
     Start-Process -FilePath "powershell.exe" -Verb RunAs -ArgumentList $arguments
 
     # Exit the current script
