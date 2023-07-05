@@ -85,7 +85,7 @@ if defined missing (
 echo Config Saved Successfully!
 timeout 2 >nul
 (
-echo "%USERPROFILE%\ProxyManager\v2rayN\v2rayN-Core\v2rayN.exe"_"%HOMEDRIVE%\Program Files (x86)\Proxifier\Proxifier.exe"_"%USERPROFILE%\ProxyManager\proxydata-main\Gecho.exe"_"%USERPROFILE%\ProxyManager\proxydata-main\httping.exe"_"%USERPROFILE%\ProxyManager\proxydata-main\speedtest.exe"
+echo "%USERPROFILE%\ProxyManager\v2rayN-Core\v2rayN.exe"_"%HOMEDRIVE%\Program Files (x86)\Proxifier\Proxifier.exe"_"%USERPROFILE%\ProxyManager\proxydata-main\Gecho.exe"_"%USERPROFILE%\ProxyManager\proxydata-main\httping.exe"_"%USERPROFILE%\ProxyManager\proxydata-main\speedtest.exe"
 )>config.sahi
 goto :create
 
@@ -203,8 +203,8 @@ echo %file1%_%file2%
 
 
 FOR /F "usebackq delims=" %%i in (`cscript findDesktop.vbs`) DO SET DESKTOPDIR=%%i
-set TARGET='%USERPROFILE%\ProxyManager\proxydata-main\proxydev.bat'
-set SHORTCUT='%DESKTOPDIR%\ProxyManger.lnk'
+set TARGET='%USERPROFILE%\ProxyManager\proxydata-main\Proxy Manager.bat'
+set SHORTCUT='%DESKTOPDIR%\ProxyManager.lnk'
 set PWS=powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile
 
 %PWS% -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(%SHORTCUT%); $S.TargetPath = %TARGET%; $S.Save()"
@@ -371,8 +371,7 @@ call :startv
 reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f
 reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyOverride /t REG_SZ /d "localhost;127.*;10.*;172.16.*;172.17.*;172.18.*;172.19.*;172.20.*;172.21.*;172.22.*;172.23.*;172.24.*;172.25.*;172.26.*;172.27.*;172.28.*;172.29.*;172.30.*;172.31.*;192.168.*" /f
 reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /t REG_SZ /d "127.0.0.1:10809" /f
-set message=Deteminding the proxy state
-call :loading
+echo Deteminding the proxy state..
 timeout 2 >nul
 goto :networkcheck
 
@@ -395,8 +394,7 @@ call :startall
 :check
 Color 3F & MODE con:cols=80 lines=7
 cls
-set message=Deteminding the proxy state
-call :loading
+echo Deteminding the proxy state..
 timeout 2 >nul
 :retry
 tasklist /FI "IMAGENAME eq v2rayN.exe" 2>NUL | find /I /N "v2rayN.exe">NUL
