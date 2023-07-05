@@ -1,5 +1,3 @@
-# Copyright 2022 SahiDemon|SahinduGayanuka. 
-
 param (
   [string] $version
 )
@@ -24,6 +22,42 @@ function Write-Done {
   Write-Host "OK" -ForegroundColor "Green"
 }
 
+# Copyright 2022 SahiDemon|SahinduGayanuka. 
+
+
+# Check if the current PowerShell session has administrative privileges
+$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+# If not running as administrator, relaunch the script with elevated privileges
+if (-not $isAdmin) {
+    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+    Exit
+}
+
+# Code requiring admin privileges goes here
+Write-Host "This script is running with administrative privileges."
+
+
+
+$folderPath = "C:\Users\Administrator\AppData\Roaming\Ookla\Speedtest CLI"
+$filePath = "$folderPath\speedtest-cli.ini"
+$content = @"
+[Settings]
+LicenseAccepted=604ec27f828456331ebf441826292c49276bd3c1bee1a2f65a6452f505c4061c
+"@
+
+# Create the folder if it does not exist
+if (-not (Test-Path -Path $folderPath)) {
+    New-Item -ItemType Directory -Path $folderPath | Out-Null
+}
+
+$encoding = [System.Text.Encoding]::UTF8
+$bytes = $encoding.GetBytes($content)
+Set-Content -Path $filePath -Value $bytes -Encoding Byte
+
+
+
+
 if ($PSVersionTable.PSVersion.Major -gt $PSMinVersion) {
   $ErrorActionPreference = "Stop"
 
@@ -39,6 +73,9 @@ if ($PSVersionTable.PSVersion.Major -gt $PSMinVersion) {
     New-Item -Path $sp_dir -ItemType Directory | Out-Null
     Write-Done
   }
+
+
+
 
   # Download release.
   $zip_file = "${sp_dir}\v2rayN.zip"
