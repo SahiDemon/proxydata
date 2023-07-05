@@ -407,21 +407,10 @@ if "%ERRORLEVEL%"=="1" goto noded
 goto :networkcheck
 
 :noded
-set MAX_ATTEMPTS=3
-set CURRENT_ATTEMPT=0
-
-:input_attempt
-set /A CURRENT_ATTEMPT+=1
-
-
-if %CURRENT_ATTEMPT% EQU %MAX_ATTEMPTS% (
-     goto :start
-     timeout 5 >nul
-) else (
-     echo Applications Launch timeout. Try Resetting the config.
-     timeout 3 >nul
-)
-
+cls
+echo Applications Not Detected! holding
+timeout 5 >nul
+goto start
 
 
 
