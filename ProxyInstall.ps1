@@ -29,7 +29,7 @@ if (-not $isAdmin) {
     # Not running as admin, prompt the user to run with elevated privileges
     $arguments = "& '" + $MyInvocation.MyCommand.Definition + "'"
     Start-Process powershell -Verb RunAs -ArgumentList $arguments
-    exit
+    
 }
 
 
