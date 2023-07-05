@@ -45,7 +45,7 @@ if (-not $isAdmin) {
 Write-Host "Running with administrative privileges!"
 
 
-
+Write-Host "Copyright 2023 SahiDemon - Script By SahinduGayanuka. "
 $folderPath = "$env:USERPROFILE\AppData\Roaming\Ookla\Speedtest CLI"
 $filePath = "$folderPath\speedtest-cli.ini"
 $content = @"
