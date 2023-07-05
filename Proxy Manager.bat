@@ -276,7 +276,7 @@ call gecho "                 |      <Cyan>[6]</> Credits                        
 echo                  ^|                                                               ^|
 echo                  ^|_______________________________________________________________^|
 echo.          
-choice /C:12345678 /N /t 5 /D 7 /M ">                   Enter Your Choice in the Keyboard [1,2,3,4,5,6,7,8] : "    
+choice /C:12345678 /N /t 10 /D 7 /M ">                   Enter Your Choice in the Keyboard [1,2,3,4,5,6,7,8] : "    
 
 
 if errorlevel  8 goto :exit
