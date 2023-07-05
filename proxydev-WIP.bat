@@ -19,7 +19,7 @@ if not exist config.sahi goto loadfail
 ::#region Config Check
 :loadfail
 cls
-echo Folder does not exist the configuration. Redirecting To installation
+echo Hmm. Looks like It's a Fresh Start. Hang Tight We got this!
 timeout 3 >nul
 goto :smartscan
 
@@ -33,7 +33,7 @@ timeout 3 >nul
 goto :resume
 ) else (
 Color 4F & MODE con:cols=80 lines=10
-echo Config is corrupted plese re-config the configuration
+echo Uhh ERROR:404 Lets make this right!
 timeout 3 >nul
 goto :reset
 )
@@ -96,7 +96,7 @@ goto :create
 cls
 :setv
 cls
-echo We Recommended Automatic Selection! Note: YOU ARE OVERRIDING DEFAULTS THIS MAY CAUSE ERRORS.
+echo We Recommended Automatic selection!
 timeout 2 >nul
 Echo Select v2rayN.exe Here!
 set cmd=Add-Type -AssemblyName System.Windows.Forms;$f=new-object                 Windows.Forms.OpenFileDialog;$f.InitialDirectory=        [environment]::GetFolderPath('Desktop');$f.Filter='v2rayN(*.exe)^|*.exe^|All         Files(*.*)^|*.*';$f.Multiselect=$true;[void]$f.ShowDialog();if($f.Multiselect)        {$f.FileNames}else{$f.FileName}
@@ -124,30 +124,44 @@ echo File Selected: "%~1"
 set File2=%File2% "%~1"
 set ret=%File2%
 set /P o=   Do you want to proceed (Y/N)?
-if /I "%o%" EQU "Y" goto :finaldone
+if /I "%o%" EQU "Y" goto :next
 if /I "%o%" EQU "N" goto :setp
 
 
-@REM :soundy
-@REM cls 
-@REM Echo Drag ^& Drop "Success" Sound Effect Here!
-@REM set /p file3="Enter the file path for Success Sound : "
-@REM cls 
-@REM Echo Drag ^& Drop "Failed" Sound Effect Here!
-@REM set /p file4="Enter the file path for Failed Sound : "
-@REM cls
-@REM echo "Success" Sound Effect="%file3%"
-@REM echo "Failed" Sound Effect="%file4%"
-@REM set /P o=   Do you want to proceed (Y/N)?
-@REM if /I "%o%" EQU "Y" goto :finaldone
-@REM if /I "%o%" EQU "N" goto :soundy
+:next
+cls
+timeout 2 >nul
+echo Select Proxy Manager folder directory here:
+
+:: Run the code to select a folder
+for /f "delims=" %%I in ('powershell -Command "Add-Type -AssemblyName System.Windows.Forms;$f=new-object Windows.Forms.FolderBrowserDialog;$f.SelectedPath = [Environment]::GetFolderPath('Desktop');[void]$f.ShowDialog();$f.SelectedPath"') do set "selectedFolder=%%I"
+
+:: Specify the filenames to check
+set "filesToCheck=effectfail.mp3 effectpass.mp3"
+
+:: Check if all files exist in the selected folder
+set "allFilesExist=true"
+for %%F in (%filesToCheck%) do (
+    if not exist "%selectedFolder%\%%F" (
+        set "allFilesExist=false"
+    )
+)
+
+:: Display the result
+if %allFilesExist%==true (
+    echo Requirements Satisfied! Folder Accepted.
+    goto :finaldone
+) else (
+    echo Folder Rejected. Does not meet Requirements 
+    goto  :next
+)
 
 
 
 :finaldone
 @cd /d "%~dp0"
 ( echo Set Sound = CreateObject("WMPlayer.OCX.7"^)
-  echo Sound.URL = "%cd%\effectpass.mp3"
+  echo Sound.URL = "%selectedFolder%\effectpass.mp3"
   echo Sound.Controls.play
   echo do while Sound.currentmedia.duration = 0
   echo wscript.sleep 100
@@ -156,7 +170,7 @@ if /I "%o%" EQU "N" goto :setp
 )
 
 ( echo Set Sound = CreateObject("WMPlayer.OCX.7"^)
-  echo Sound.URL = "%cd%\effectfail.mp3"
+  echo Sound.URL = "%selectedFolder%\effectfail.mp3"
   echo Sound.Controls.play
   echo do while Sound.currentmedia.duration = 0
   echo wscript.sleep 100
@@ -248,7 +262,7 @@ echo                  ^|      __________________________________________________
 echo                  ^|                                                               ^| 
 call gecho "                 |      <%sbutton%>[1]<%start%> Activate Proxy (Recommended)        - SmartMode </>     |      "
 echo                  ^|                                                               ^|
-call gecho "                 |      <%rbutton%>[2]<%restart%> Activate Proxy (Native)           - Native Mode </>     |   "
+call gecho "                 |      <%rbutton%>[2]<%restart%> Activate Proxy (FORCED)           - Forced Mode </>     |   "
 echo                  ^|                                                               ^|
 call gecho "                 |      <%kbutton%>[3]<%kill%> Deactivate Proxy                - Make inactive  </>    |    "
 echo                  ^|      ___________________________________________________      ^|
@@ -272,8 +286,8 @@ if errorlevel  6 goto :Credits
 if errorlevel  5 goto :Extras
 if errorlevel  4 goto :check
 if errorlevel  3 goto :kill
-if errorlevel  2 goto :
-if errorlevel  1 goto :
+if errorlevel  2 goto :forced
+if errorlevel  1 goto :start
 ::#endregion
 ::#region SubMenu
 :Extras
@@ -343,6 +357,30 @@ cls
 goto :devmode
 
 
+
+
+:forced
+cls
+echo Make sure to kill the proxy before exiting the script! 
+timeout 2 >nul
+set message=Initializing Proxy Applications
+call :loading
+timeout 1 >nul
+TASKKILL /F /IM Proxifier.exe
+TASKKILL /F /IM v2rayN.exe
+call :startv
+reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f
+reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyOverride /t REG_SZ /d "localhost;127.*;10.*;172.16.*;172.17.*;172.18.*;172.19.*;172.20.*;172.21.*;172.22.*;172.23.*;172.24.*;172.25.*;172.26.*;172.27.*;172.28.*;172.29.*;172.30.*;172.31.*;192.168.*" /f
+reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /t REG_SZ /d "127.0.0.1:10809" /f
+set message=Deteminding the proxy state
+call :loading
+timeout 2 >nul
+goto :networkcheck
+
+
+
+
+
 ::#endregion
 ::#region StartProxyApps
 :Start
@@ -350,25 +388,42 @@ Color 3F & MODE con:cols=80 lines=7
 TASKKILL /F /IM Proxifier.exe
 TASKKILL /F /IM v2rayN.exe
 cls
-Echo Requesting The Applications To Initiate The Proxy..
+set message=Initializing Proxy Applications
+call :loading
 timeout 3 >nul
+reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f
 call :startall
-timeout 3 >nul
 :check
 Color 3F & MODE con:cols=80 lines=7
 cls
-Echo Checking Proxy State..
+set message=Deteminding the proxy state
+call :loading
 timeout 2 >nul
 :retry
-tasklist /FI "IMAGENAME eq Proxifier.exe" 2>NUL | find /I /N "Proxifier.exe">NUL
+tasklist /FI "IMAGENAME eq v2rayN.exe" 2>NUL | find /I /N "v2rayN.exe">NUL
 if "%ERRORLEVEL%"=="1" goto noded
 goto :networkcheck
 
 :noded
-cls
-echo Applications Not Detected! holding
-timeout 5 >nul
-goto start
+set MAX_ATTEMPTS=3
+set CURRENT_ATTEMPT=0
+
+:input_attempt
+set /A CURRENT_ATTEMPT+=1
+
+
+if %CURRENT_ATTEMPT% EQU %MAX_ATTEMPTS% (
+     goto :start
+     timeout 5 >nul
+) else (
+     echo Applications Launch timeout. Try Resetting the config.
+     timeout 3 >nul
+)
+
+
+
+
+
 
 ::#endregion
 ::#region NetworkCheck
@@ -556,6 +611,7 @@ cls
 Color 4F & MODE con:cols=80 lines=10
 Echo Requesting To Kill The Proxy...
 timeout 3 >nul
+reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f
 TASKKILL /F /IM Proxifier.exe
 TASKKILL /F /IM v2rayN.exe
 Echo Success! Redirecting...
@@ -566,7 +622,8 @@ goto choice
 :Exit
 cls
 Color 4F & MODE con:cols=80 lines=10
-Echo Exiting The Script. GG!
+reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f
+Echo Exiting The Script..
 timeout 3 >nul
 Exit
 
