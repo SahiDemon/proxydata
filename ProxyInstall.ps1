@@ -26,12 +26,13 @@ $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIde
 
 # Check if the current PowerShell session has administrative privileges
 if (-not $isAdmin) {
-    $arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
+    $scriptPath = $MyInvocation.MyCommand.Path
+    $arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$scriptPath`""
+
+    # Start a new PowerShell process with elevated privileges
     Start-Process powershell.exe -ArgumentList $arguments -Verb RunAs
 
-    # Add a delay to allow time for the UAC prompt
-    Start-Sleep -Seconds 5
-
+    # Exit the current session
     Exit
 }
 
