@@ -117,7 +117,7 @@ if ($PSVersionTable.PSVersion.Major -gt $PSMinVersion) {
       Write-Host "Press 'OK' in the following prompt to load the pre-built config into Proxifier"
       Start-Sleep -Seconds 3
       Set-ItemProperty -Path 'HKCU:\Environment' -Name 'Path' -Value "$($env:Path);$($env:USERPROFILE)\ProxyManager\proxydata-main\httping.exe"
-      Invoke-Item "${HOME}\ProxyManager\proxydata-main\Proxy Chanager.bat"
+      Invoke-Item "${HOME}\ProxyManager\proxydata-main\Proxy Manager.bat"
       Write-Host "Close this window and continue the installation in Proxy Manager"
       Start-Sleep -Seconds 2
       Write-Part "Script By "; Write-Emphasized "SahiDemon SahinduGayanuka"; Write-Host " ProxyManager.`n"
