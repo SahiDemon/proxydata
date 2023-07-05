@@ -60,7 +60,6 @@ if defined missing (
   echo Redirecting to mannual selection
   set message=Automatic Detection failed! Redirecting...
   call :loading
-  timeout 2 >nul
   goto :setdir
 )
 
@@ -739,7 +738,7 @@ Color 4F & MODE con:cols=80 lines=10
 echo Resetting the configuration..
 del config.sahi
 timeout 5 >nul
-goto :setdir
+goto :autofilesetup
 
 
 :loading
