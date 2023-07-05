@@ -45,7 +45,7 @@ set message=Auto Deteminding File Locations..
 call :loading
 timeout 1 >nul
 
-set files="%HOMEDRIVE%\Program Files (x86)\Proxifier\Proxifier.exe" "%USERPROFILE%\ProxyManager\proxydata-main\httping.exe" "%USERPROFILE%\ProxyManager\proxydata-main\ERRORproxy.mp3" "%USERPROFILE%\ProxyManager\proxydata-main\proxySuccess.mp3" "%USERPROFILE%\ProxyManager\v2rayN\v2rayN-Core\v2rayN.exe"
+set files="%HOMEDRIVE%\Program Files (x86)\Proxifier\Proxifier.exe" "%USERPROFILE%\ProxyManager\proxydata-main\httping.exe" "%USERPROFILE%\ProxyManager\proxydata-main\ERRORproxy.mp3" "%USERPROFILE%\ProxyManager\proxydata-main\proxySuccess.mp3" "%USERPROFILE%\ProxyManager\v2rayN-Core\v2rayN.exe"
 
 set missing=
 
