@@ -268,7 +268,7 @@ echo                  ^|      __________________________________________________
 echo                  ^|                                                               ^| 
 call gecho "                 |      <%sbutton%>[1]<%start%> Activate Proxy (Recommended)        - SmartMode </>     |      "
 echo                  ^|                                                               ^|
-call gecho "                 |      <%rbutton%>[2]<%restart%> Activate Proxy (WIP)            - Forced Mode </>     |   "
+call gecho "                 |      <%rbutton%>[2]<%restart%> Activate Proxy (WIP)              - Forced Mode </>     |   "
 echo                  ^|                                                               ^|
 call gecho "                 |      <%kbutton%>[3]<%kill%> Deactivate Proxy                - Make inactive  </>    |    "
 echo                  ^|      ___________________________________________________      ^|
