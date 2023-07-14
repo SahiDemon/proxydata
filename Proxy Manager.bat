@@ -268,7 +268,7 @@ echo                  ^|      __________________________________________________
 echo                  ^|                                                               ^| 
 call gecho "                 |      <%sbutton%>[1]<%start%> Activate Proxy (Recommended)        - SmartMode </>     |      "
 echo                  ^|                                                               ^|
-call gecho "                 |      <%rbutton%>[2]<%restart%> Activate Proxy (FORCED)           - Forced Mode </>     |   "
+call gecho "                 |      <%rbutton%>[2]<%restart%> Activate Proxy (WIP)            - Forced Mode </>     |   "
 echo                  ^|                                                               ^|
 call gecho "                 |      <%kbutton%>[3]<%kill%> Deactivate Proxy                - Make inactive  </>    |    "
 echo                  ^|      ___________________________________________________      ^|
@@ -367,18 +367,22 @@ goto :devmode
 
 :forced
 cls
+SET "kbutton=red"
+SET "rbutton=green"
+SET "sbutton=red"
 Color 3F & MODE con:cols=80 lines=7
-echo Make sure to kill the proxy before exiting the script! 
+echo Work in progress - not working 
+@REM echo Make sure to kill the proxy before exiting the script! 
 timeout 2 >nul
-set message=Initializing Proxy Applications
-call :loading
-timeout 1 >nul
-TASKKILL /F /IM Proxifier.exe
-TASKKILL /F /IM v2rayN.exe
-call :startv
-cd /d "%original_dir%"
-call :regrun
-cls
+@REM set message=Initializing Proxy Applications
+@REM call :loading
+@REM timeout 1 >nul
+@REM TASKKILL /F /IM Proxifier.exe
+@REM TASKKILL /F /IM v2rayN.exe
+@REM call :startv
+@REM cd /d "%original_dir%"
+@REM call :regrun
+@REM cls
 echo Deteminding the proxy state..
 timeout 2 >nul
 goto :networkcheck
@@ -390,6 +394,9 @@ goto :networkcheck
 ::#endregion
 ::#region StartProxyApps
 :Start
+SET "kbutton=red"
+SET "rbutton=red"
+SET "sbutton=green"
 Color 3F & MODE con:cols=80 lines=7
 TASKKILL /F /IM Proxifier.exe
 TASKKILL /F /IM v2rayN.exe
@@ -546,12 +553,12 @@ call gecho "                 |      <Green>PROXY MANAGER                        
 SET "display=Active"
 SET "color=green"
 
-SET "start=White"
+SET "start=white"
 SET "kill=white"
 SET "restart=White"
-SET "kbutton=red"
-SET "rbutton=Cyan"
-SET "sbutton=DarkGray"
+@REM SET "kbutton=red"
+@REM SET "rbutton=red"
+@REM SET "sbutton=green"
 
 
 
@@ -566,9 +573,9 @@ SET "color=DarkRed"
 SET "start=White"
 SET "kill=White"
 SET "restart=White"
-SET "kbutton=DarkGray"
-SET "rbutton=DarkGray"
-SET "sbutton=Green"
+@REM SET "kbutton=DarkGray"
+@REM SET "rbutton=DarkGray"
+@REM SET "sbutton=DarkGray"
 
 
 
@@ -587,7 +594,6 @@ SET "restart=White"
 SET "kbutton=DarkGray"
 SET "rbutton=DarkGray"
 SET "sbutton=Green"
-
 
 exit /B 0
 
@@ -611,6 +617,9 @@ cls
 goto :choice
 
 :Kill
+SET "kbutton=red"
+SET "rbutton=cyan"
+SET "sbutton=cyan"
 set /a "passfail=2"
 cls
 Color 4F & MODE con:cols=80 lines=10
@@ -884,12 +893,16 @@ cls
    )
   )
  )
-@pause>nul& goto :choice& :::::
+@pause>nul& start "" "https://www.paypal.com/donate/?hosted_button_id=64QBJTHA2PERS" & goto :choice& :::::
 
-                                          PROXY MANAGER V2.12
+                                          PROXY MANAGER V3.12
 
-                THIS IS AN ADVANCED SCRIPT THAT I WROTE TO AUTOMATE THE SETUP OF PROXY.
-                IT MAY CONTAIN FAULTS SINCE IT IS STILL IN THE DEVELOPMENT STAGE.
+                I'M EXCITED TO SHARE AN ADVANCED SCRIPT THAT I PERSONALLY DEVELOPED
+                TO STREAMLINE THE PROXY SETUP. AS WITH ANY WORK IN PROGRESS, IT'S
+                IMPORTANT TO ACKNOWLEDGE THAT THE SCRIPT IS STILL IN THE DEVELOPMENT
+                STAGE, WHICH MEANS THERE COULD BE SOME POTENTIAL FAULTS OR IMPERFECTIONS.
+                NEVERTHELESS, I'M CONFIDENT THAT THIS SCRIPT WILL GREATLY AUTOMATE 
+                THE PROXY SETUP PROCESS.
 
                 Support: gsahindu@gmail.com (Paypal/Email)
                 Contact: https://discord.gg/h9DTvDM  (Discord Server)
@@ -899,4 +912,3 @@ cls
                                       ========================
                                               SAHIDEMON
                                           END OF CREDITS.
-::#endregion
