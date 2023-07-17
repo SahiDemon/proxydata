@@ -271,7 +271,7 @@ echo                  ^|      __________________________________________________
 echo                  ^|                                                               ^| 
 call gecho "                 |      <%sbutton%>[1]<%start%> Activate Proxy (Recommended)        - SmartMode </>     |      "
 echo                  ^|                                                               ^|
-call gecho "                 |      <%rbutton%>[2]<%restart%> Activate Proxy (FORCED)           - Forced Mode </>     |   "
+call gecho "                 |      <%rbutton%>[2]<%restart%> Activate Proxy (WIP)              - Forced Mode </>     |   "
 echo                  ^|                                                               ^|
 call gecho "                 |      <%kbutton%>[3]<%kill%> Deactivate Proxy                - Make inactive  </>    |    "
 echo                  ^|      ___________________________________________________      ^|
@@ -375,7 +375,8 @@ SET "rbutton=green"
 SET "sbutton=red"
 set /a "forced=1"
 Color 3F & MODE con:cols=80 lines=7
-echo Make sure to kill the proxy before exiting the script! 
+echo Work in progress - not working 
+@REM echo Make sure to kill the proxy before exiting the script! 
 timeout 2 >nul
 set message=Initializing Proxy Applications
 call :loading
@@ -409,6 +410,9 @@ goto :networkcheck
 ::#endregion
 ::#region StartProxyApps
 :Start
+SET "kbutton=red"
+SET "rbutton=red"
+SET "sbutton=green"
 SET "kbutton=red"
 SET "rbutton=red"
 SET "sbutton=green"
@@ -574,8 +578,12 @@ SET "display=Active"
 SET "color=green"
 
 SET "start=white"
+SET "start=white"
 SET "kill=white"
 SET "restart=White"
+@REM SET "kbutton=red"
+@REM SET "rbutton=red"
+@REM SET "sbutton=green"
 @REM SET "kbutton=red"
 @REM SET "rbutton=red"
 @REM SET "sbutton=green"
@@ -615,7 +623,6 @@ SET "kbutton=DarkGray"
 SET "rbutton=DarkGray"
 SET "sbutton=Green"
 
-
 exit /B 0
 
 
@@ -634,6 +641,9 @@ cls
 goto :choice
 
 :Kill
+SET "kbutton=red"
+SET "rbutton=cyan"
+SET "sbutton=cyan"
 SET "kbutton=red"
 SET "rbutton=cyan"
 SET "sbutton=cyan"
@@ -943,12 +953,16 @@ cls
    )
   )
  )
-@pause>nul& goto :choice& :::::
+@pause>nul& start "" "https://www.paypal.com/donate/?hosted_button_id=64QBJTHA2PERS" & goto :choice& :::::
 
-                                          PROXY MANAGER V2.12
+                                          PROXY MANAGER V3.12
 
-                THIS IS AN ADVANCED SCRIPT THAT I WROTE TO AUTOMATE THE SETUP OF PROXY.
-                IT MAY CONTAIN FAULTS SINCE IT IS STILL IN THE DEVELOPMENT STAGE.
+                I'M EXCITED TO SHARE AN ADVANCED SCRIPT THAT I PERSONALLY DEVELOPED
+                TO STREAMLINE THE PROXY SETUP. AS WITH ANY WORK IN PROGRESS, IT'S
+                IMPORTANT TO ACKNOWLEDGE THAT THE SCRIPT IS STILL IN THE DEVELOPMENT
+                STAGE, WHICH MEANS THERE COULD BE SOME POTENTIAL FAULTS OR IMPERFECTIONS.
+                NEVERTHELESS, I'M CONFIDENT THAT THIS SCRIPT WILL GREATLY AUTOMATE 
+                THE PROXY SETUP PROCESS.
 
                 Support: gsahindu@gmail.com (Paypal/Email)
                 Contact: https://discord.gg/h9DTvDM  (Discord Server)
@@ -958,4 +972,3 @@ cls
                                       ========================
                                               SAHIDEMON
                                           END OF CREDITS.
-::#endregion
