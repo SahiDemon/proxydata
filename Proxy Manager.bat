@@ -6,7 +6,9 @@ call proxyintro.bat
 @cd /d "%~dp0"
 set "original_dir=%cd%"
 SET /a "St=0"
+set /a "forced=0"
 set soundConfigFile=sound.config
+set sysProxyconfig=sysProxy.config
 SET /a "passfail=0"
 Set "DownSpeed=Download: 0.00 MB/s"
 set "Latecy=Latency: 00.00 ms"
@@ -32,6 +34,7 @@ findstr "v2rayN.exe proxifier" config.sahi > nul
 if %errorlevel%==0 (
 cls
 echo Config Loaded Successfully!
+
 
 timeout 3 >nul
 goto :resume
@@ -348,12 +351,12 @@ if errorlevel  1 goto :add
 :manualspeed
 if  exist "speedtest.exe" (
   start sptest.vbs
- ) else (
+ ) 
 Color 4F & MODE con:cols=80 lines=10
 echo Files are missing to start the speedtest! Please download the files and place them in the same folder as this script.
 timeout 3 >nul
 goto :choice
-
+ 
 :devmode
 color 70  & mode con:cols=100 lines=15
 echo Devmode
@@ -370,19 +373,32 @@ cls
 SET "kbutton=red"
 SET "rbutton=green"
 SET "sbutton=red"
+set /a "forced=1"
 Color 3F & MODE con:cols=80 lines=7
 echo Work in progress - not working 
 @REM echo Make sure to kill the proxy before exiting the script! 
 timeout 2 >nul
-@REM set message=Initializing Proxy Applications
-@REM call :loading
-@REM timeout 1 >nul
-@REM TASKKILL /F /IM Proxifier.exe
-@REM TASKKILL /F /IM v2rayN.exe
-@REM call :startv
-@REM cd /d "%original_dir%"
-@REM call :regrun
-@REM cls
+set message=Initializing Proxy Applications
+call :loading
+timeout 1 >nul
+TASKKILL /F /IM Proxifier.exe
+TASKKILL /F /IM v2rayN.exe
+cls
+echo Attempting System Request to set global proxy..
+(echo sysProxy=true)>sysProxy.config
+timeout 1 >nul
+setlocal
+@cd /d "%~dp0"
+for /f "tokens=1,2 delims=_" %%a in (config.sahi) do (
+    set "ffold=%%~dpa"
+)
+cd /d "%ffold%"
+call :regrun
+endlocal
+:Return
+cd /d "%original_dir%"
+call :startv
+cls
 echo Deteminding the proxy state..
 timeout 2 >nul
 goto :networkcheck
@@ -397,13 +413,34 @@ goto :networkcheck
 SET "kbutton=red"
 SET "rbutton=red"
 SET "sbutton=green"
+SET "kbutton=red"
+SET "rbutton=red"
+SET "sbutton=green"
 Color 3F & MODE con:cols=80 lines=7
 TASKKILL /F /IM Proxifier.exe
 TASKKILL /F /IM v2rayN.exe
 cls
+@cd /d "%~dp0"
+if exist "%sysProxyconfig%" (
+  cls
+  echo Proxy is set to global mode reversing changes..
+  del sysProxy.config
+  timeout 1 >nul
+  setlocal
+  @cd /d "%~dp0"
+  for /f "tokens=1,2 delims=_" %%a in (config.sahi) do (
+      set "ffold=%%~dpa"
+  )
+  cd /d "%ffold%"
+  call :regkill
+  endlocal
+
+)
+cd /d "%original_dir%"
 set message=Initializing Proxy Applications
 call :loading
 timeout 3 >nul
+
 call :startall
 :check
 Color 3F & MODE con:cols=80 lines=7
@@ -416,21 +453,8 @@ if "%ERRORLEVEL%"=="1" goto noded
 goto :networkcheck
 
 :noded
-set MAX_ATTEMPTS=3
-set CURRENT_ATTEMPT=0
-
-:input_attempt
-set /A CURRENT_ATTEMPT+=1
-
-
-if %CURRENT_ATTEMPT% EQU %MAX_ATTEMPTS% (
-     goto :start
-     timeout 5 >nul
-) else (
-     echo Applications Launch timeout. Try Resetting the config.
-     timeout 3 >nul
-)
-
+timeout 5 >nul
+goto :start
 
 
 
@@ -554,8 +578,12 @@ SET "display=Active"
 SET "color=green"
 
 SET "start=white"
+SET "start=white"
 SET "kill=white"
 SET "restart=White"
+@REM SET "kbutton=red"
+@REM SET "rbutton=red"
+@REM SET "sbutton=green"
 @REM SET "kbutton=red"
 @REM SET "rbutton=red"
 @REM SET "sbutton=green"
@@ -599,9 +627,6 @@ exit /B 0
 
 
 
-
-
-
 :Restart
 cls
 Color 4F & MODE con:cols=80 lines=10
@@ -609,7 +634,6 @@ Echo Requesting To Restarting The Proxy...
 timeout 3 >nul
 TASKKILL /F /IM Proxifier.exe
 TASKKILL /F /IM v2rayN.exe
-call :regkill
 call :startall
 Echo Success! Redirecting...
 timeout 3 >nul
@@ -620,12 +644,29 @@ goto :choice
 SET "kbutton=red"
 SET "rbutton=cyan"
 SET "sbutton=cyan"
+SET "kbutton=red"
+SET "rbutton=cyan"
+SET "sbutton=cyan"
 set /a "passfail=2"
 cls
 Color 4F & MODE con:cols=80 lines=10
 Echo Requesting To Kill The Proxy...
 timeout 3 >nul
-call :regkill
+if "%forced%"=="1" (
+  echo Attempting System Request to remove global proxy..
+  del sysProxy.config
+  timeout 1 >nul
+  setlocal
+  @cd /d "%~dp0"
+  for /f "tokens=1,2 delims=_" %%a in (config.sahi) do (
+      set "ffold=%%~dpa"
+  )
+  cd /d "%ffold%"
+  call :regkill
+  endlocal
+)
+:Retrunkill
+cd /d "%original_dir%"
 TASKKILL /F /IM Proxifier.exe
 TASKKILL /F /IM v2rayN.exe
 cls
@@ -637,7 +678,9 @@ goto choice
 :Exit
 cls
 Color 4F & MODE con:cols=80 lines=10
-call :regkill
+if "%forced%"=="1" (
+    call :regkill
+)
 Echo Exiting The Script..
 timeout 3 >nul
 Exit
@@ -772,22 +815,39 @@ cls && goto :choice
 
 
 
-
-
-
 :regrun
 cls
-reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyOverride /t REG_SZ /d "localhost;127.*;10.*;172.16.*;172.17.*;172.18.*;172.19.*;172.20.*;172.21.*;172.22.*;172.23.*;172.24.*;172.25.*;172.26.*;172.27.*;172.28.*;172.29.*;172.30.*;172.31.*;192.168.*" /f
-reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /t REG_SZ /d "127.0.0.1:10809" /f
-reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f
-exit /B 0
+set "file=%ffold%/guiNConfig.json"
+set "oldLine=\"sysProxyType\": 0,"
+set "newLine=\"sysProxyType\": 1,"
 
+powershell -ExecutionPolicy Bypass -Command "$content=Get-Content -Path '%file%'; if ($content -match [regex]::Escape('%oldLine%')) { $newContent=$content -replace [regex]::Escape('%oldLine%'), '%newLine%'; $newContent | Set-Content -Path '%file%'; exit 0; } else { exit 1; }"
+
+if %ERRORLEVEL% equ 0 (
+    echo Line replaced successfully.
+) else (
+    echo Error: Line not found in the file or file not found.
+    echo Please check the file path and content.
+    pause
+)
+exit /B 0
 
 :regkill
-reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f
+cls
+set "file=%ffold%/guiNConfig.json"
+set "oldLine=\"sysProxyType\": 1,"
+set "newLine=\"sysProxyType\": 0,"
+
+powershell -ExecutionPolicy Bypass -Command "$content=Get-Content -Path '%file%'; if ($content -match [regex]::Escape('%oldLine%')) { $newContent=$content -replace [regex]::Escape('%oldLine%'), '%newLine%'; $newContent | Set-Content -Path '%file%'; exit 0; } else { exit 1; }"
+
+if %ERRORLEVEL% equ 0 (
+    echo Line replaced successfully.
+) else (
+    echo Error: Line not found in the file or file not found.
+    echo Please check the file path and content.
+    pause
+)
 exit /B 0
-
-
 
 :Mute
 cls
