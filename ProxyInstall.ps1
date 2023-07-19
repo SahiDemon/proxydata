@@ -47,15 +47,14 @@ Write-Host "Running with administrative privileges!"
 Write-Host "Password for Controlled Execution: Authorizes secure script access "
 function Get-Password {
   param (
-      [string]$Prompt = "Enter the password"
+      [string]$Prompt = "Enter the password to continue the script"
   )
 
   $securePassword = Read-Host -Prompt $Prompt -AsSecureString
   return $securePassword
 }
 
-# Define the correct password (replace 'your_password_here' with the actual password)
-$correctPassword = "sahi321"
+$correctPassword = "sahiproxy"
 
 # Ask for the password
 $enteredPassword = Get-Password
