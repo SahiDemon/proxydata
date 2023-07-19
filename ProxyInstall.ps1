@@ -44,8 +44,31 @@ if (-not $isAdmin) {
 # Code to be executed with administrative privileges goes here
 Write-Host "Running with administrative privileges!"
 
-
 Write-Host "Copyright 2023 SahiDemon - Script By SahinduGayanuka. "
+
+function Get-Password {
+  param (
+      [string]$Prompt = "Enter the password"
+  )
+
+  $securePassword = Read-Host -Prompt $Prompt -AsSecureString
+  return $securePassword
+}
+
+# Define the correct password (replace 'your_password_here' with the actual password)
+$correctPassword = "sahi321"
+
+# Ask for the password
+$enteredPassword = Get-Password
+
+# Convert the entered password to plain text
+$enteredPasswordPlain = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($enteredPassword))
+
+# Check if the entered password matches the correct password
+if ($enteredPasswordPlain -eq $correctPassword) {
+
+
+
 $folderPath = "$env:USERPROFILE\AppData\Roaming\Ookla\Speedtest CLI"
 $filePath = "$folderPath\speedtest-cli.ini"
 $content = @"
@@ -161,6 +184,10 @@ else {
 }
 
 
+} else {
+  # If the password is incorrect, display an error message
+  Write-Host "Incorrect password. Script execution aborted."
+}
 
 
 
