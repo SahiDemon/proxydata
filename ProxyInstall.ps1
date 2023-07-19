@@ -44,8 +44,7 @@ if (-not $isAdmin) {
 # Code to be executed with administrative privileges goes here
 Write-Host "Running with administrative privileges!"
 
-Write-Host "Copyright 2023 SahiDemon - Script By SahinduGayanuka. "
-
+Write-Host "Password for Controlled Execution: Authorizes secure script access "
 function Get-Password {
   param (
       [string]$Prompt = "Enter the password"
