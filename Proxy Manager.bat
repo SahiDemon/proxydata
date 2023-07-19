@@ -271,7 +271,7 @@ echo                  ^|      __________________________________________________
 echo                  ^|                                                               ^| 
 call gecho "                 |      <%sbutton%>[1]<%start%> Activate Proxy (Recommended)        - SmartMode </>     |      "
 echo                  ^|                                                               ^|
-call gecho "                 |      <%rbutton%>[2]<%restart%> Activate Proxy (WIP)              - Forced Mode </>     |   "
+call gecho "                 |      <%rbutton%>[2]<%restart%> Activate Proxy (Forced)           - Forced Mode </>     |   "
 echo                  ^|                                                               ^|
 call gecho "                 |      <%kbutton%>[3]<%kill%> Deactivate Proxy                - Make inactive  </>    |    "
 echo                  ^|      ___________________________________________________      ^|
@@ -375,8 +375,7 @@ SET "rbutton=green"
 SET "sbutton=red"
 set /a "forced=1"
 Color 3F & MODE con:cols=80 lines=7
-echo Work in progress - not working 
-@REM echo Make sure to kill the proxy before exiting the script! 
+echo Make sure to kill the proxy before exiting the script! 
 timeout 2 >nul
 set message=Initializing Proxy Applications
 call :loading
