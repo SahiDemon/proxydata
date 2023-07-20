@@ -10,7 +10,7 @@ set /a "forced=0"
 set soundConfigFile=sound.config
 set sysProxyconfig=sysProxy.config
 SET /a "passfail=0"
-Set "DownSpeed=Download: 0.00 MB/s"
+Set "DownSpeed=Download: 00.00 MB/s"
 set "Latecy=Latency: 00.00 ms"
 Color 3F & MODE con:cols=80 lines=7
 title Proxy Manager
@@ -266,7 +266,7 @@ if /I "%passfail%" == "1" call :passchoice
 if /I "%passfail%" == "2" call :failchoice  
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^|
-call gecho "                 |      <Cyan>%Latency%               <Cyan>%DownSpeed%</>     |"
+call gecho "                 |      <Cyan>%Latency%               <Cyan>%DownSpeed%</>      |"
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^| 
 call gecho "                 |      <%sbutton%>[1]<%start%> Activate Proxy (Recommended)        - SmartMode </>     |      "
@@ -932,42 +932,142 @@ exit /B 0
 ::#endregion
 ::#region Credits
 :Credits
+Color 5F & Mode con cols=120 lines=30
+set /a rand1=%random% %% 16
+set HEX=0123456789ABCDEF
+call set hexcolors=%%HEX:~%rand1%,1%%%%HEX:~%rand2%,1%%
+color %hexcolors%
+echo ***********************************************************************************************************************
+echo *********************************               Proxy Manager  v3.69     **********************************************
+echo ****************************************     Copyright (c) 2023 SahiDemon      ****************************************
+echo ***********************************************************************************************************************
+echo.
+echo.
+echo.
+echo                          _________-----_____
+echo                ____------           __      ----_
+echo          ___----             ___------              \
+echo             ----________        ----                 \
+echo                        -----__    ^|             _____)    
+echo                             __-                /     \
+echo                 _______-----    ___--          \    /)\
+echo           ------_______      ---____            \__/  / 
+echo                        -----__    \ --    _          /\        
+echo                               --__--__     \_____/   \_/\                                Software By SahiDemon 3.69v
+echo                                       ---^|   /          ^|     
+echo                                          ^| ^|___________^|     _____       __    _ ____     
+echo                                          ^| ^| ((_(_)^| )_)    / ___/____ _/ /_  (_) __ \___  ____ ___  ____  ____ 
+echo                                          ^|  \_((_(_)^|/(_)   \__ \/ __ `/ __ \/ / / / / _ \/ __ `__ \/ __ \/ __ \
+echo                                           \             (  ___/ / /_/ / / / / / /_/ /  __/ / / / / / /_/ / / / / /
+echo                                            \_____________)/____/\__,_/_/ /_/_/_____/\___/_/ /_/ /_/\____/_/ /_/_/ 
+Set /A "index = 1"
+SET /A "count = 70"
+
+:colors
+Color 0 
+if %index% leq %count% (
+   
+   SET /A "index = index + 1"
+   set /a rand1=0
+   set /a rand2=%random% %% 16
+   set HEX=0123456789ABCDEF
+   call set hexcolors=%%HEX:~%rand1%,1%%%%HEX:~%rand2%,1%%
+   color %hexcolors%
+   PING 127.0.0.1 -n 1 > NUL
+   goto colors
+) 
+color 0f & MODE con:cols=120 lines=30
+Cls
+(Set \n=^^^
+
+%= Newline Variable for macro definitions. Do NOT modify this or above two lines. =%)
+rem /* Used to test if substitution is used when macro is expanded */
+ Set "Hash=#"
+rem /* Define Escape Control Character for Virtual Terminal code usage */
+ For /F %%a in ('Echo Prompt $E ^|cmd')Do Set "\E=%%a"
+::: VT reference: https://learn.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
+
+rem /* Usage: %Write:#=Integer%{output string}{StringlengthVarname}{OPTIONAL-VT code for output Color} */
+rem /* Switch: /s = Hide cursor */
+ Set Write=For %%n in ( 1 2 ) Do if %%n==2 ( %\n%
+  If not "!Args:/s=!" == "!Args!" ( ^<nul Set /P "=%\E%[?25l" ) Else ( ^<nul Set /P "=%\E%[?25h" ) %\n%
+  For /F "Tokens=1,2,3 delims={}" %%1 in ("!Args!") Do if not "%%~1" == "" ( %\n%
+   If "#" == "!Hash!" ( Set "Delay=0" ) else ( Set "Delay=#" ) %\n%
+   Set "out.string=%%~1" %\n%
+   Set /A "%%~2.lines=0,eol=0,.Delay=0" %\n%
+   If not "%%~3" == "" ( Set "out.color=%%~3" ) Else ( Set "out.color=0;37" ) %\n%
+   Echo/!out.color!^|Findstr.exe /RX "[0123456789;]*" ^> nul ^|^| ( Set "out.color=0;7" ) %\n%
+   For /F "Tokens=1,2 Delims==" %%G in ( 'Set "%%~2.Length[" 2^^^> nul ' ) Do ( Set "%%G=0" )%\n%
+   For /L %%i in ( 0 1 800 ) Do if not "!out.string:~%%i,1!" == "" ( %\n%
+   If !Delay! NEQ 0 ( set /A ".Delay=!random! %%(!Delay!*2)" 2^> nul ) %\n%
+    if "!out.string:~%%i,2!" == "\n" ( %\n%
+     Set /A "%%~2.LENGTH[!%%~2.LINES!]+=1,%%~2.LINES+=1,EOL=1" %\n%
+     Echo/%\n%
+    ) Else ( %\n%
+     If !eol! EQU 0 ( %\n%
+      ^<nul Set /P "=%\E%[0m%\E%[!out.color!m!out.string:~%%i,1!%\E%[0m" %\n%
+      Set /A "%%~2.length[!%%~2.lines!]+=1" %\n%
+     )  Else ( Set /A "eol-=1" ) %\n%
+     For /L %%f in ( 1 1 !.Delay! ) Do Call :Delay 2^> nul %\n%
+    ) %\n%
+ )))Else Set Args=
+
+rem /* Usage: %Clear:#=Integer%{StringlengthVarname} */
+rem /* Alternate Usage: %Clear:#=Integer%{Integer-Lines-to-remove}{Integer-Characters-to-remove}{Integer-Offset-remove-from} */
+ Set Clear=For %%n in ( 1 2 ) Do if %%n==2 ( %\n%
+  If not "!Args:/s=!" == "!Args!" ( ^<nul Set /P "=%\E%[?25l" )Else ( ^<nul Set /P "=%\E%[?25h" ) %\n%
+  If "#" == "!Hash!" ( Set "Delay=0" ) else ( Set "Delay=#" ) %\n%
+  For /F "Tokens=1,2,3 delims={}" %%1 in ( "!Args!" )Do ( %\n%
+   If not "%%~3" == "" ( Set "erase.stop=%%~3" ) Else ( Set "erase.stop=0" ) %\n%
+   If not "!%%~1.lines!" == "" ( Set "Del.lines=!%%~1.lines!" )Else ( Set "Del.lines=%%~1" ) %\n%
+   For /L %%l in ( !Del.lines! -1 0 ) Do ( %\n%
+    If not "!%%~1.length[%%l]!" == "" ( Set "Str.len=!%%~1.length[%%l]!" ) Else ( Set "Str.len=%%~2" ) %\n%
+    ^<nul Set /P "=%\E%[!Str.len!G" %\n%
+    For /L %%i in ( !erase.stop! 1 !Str.len! ) Do ( %\n%
+     If !Delay! GTR 0 ( set /A ".Delay=!random! %%!Delay! + !Delay!" 2^> nul )Else ( Set ".Delay=0" ) %\n%
+     ^<nul Set /P "=%\E%D%\E%[0m %\E%D" %\n%
+     For /L %%f in ( 1 1 !.Delay! )Do Call :Delay 2^> nul %\n%
+    ) %\n%
+    If not "%%l" == "0" ^<nul Set /P "=%\E%[1F" %\n%
+   ) %\n%
+ ))Else Set Args=
+ 
+Setlocal EnableExtensions EnableDelayedExpansion
+
 cls
-@for /f %%i in ('^<"%~f0" find/c /v ""') do @(
-  for /f "delims=:" %%j in ('findstr/enc:"& :::::" "%~f0"') do @<"%~f0" (
-   for /f %%k in ('forfiles /m "%~nx0" /c "cmd /c echo 0x08"') do @(
-    for /l %%l in (1 1 %%i) do @(
-     set x=& set/p x=&if %%l gtr %%j (
-      if not defined x (echo.) else (
-       if defined * (echo.) else (set *=*)
-       for /f "delims=" %%m in ('cmd/u/v/c echo.!x!^| more^| findstr/n "^"') do @set y=%%m& (
-        for /f "delims=" %%n in ('cmd/v/c echo."!y:*:=!"') do @<nul (
-         if %%n neq " " (if %%n neq "=" (set/p=%%n) else (set/p=.%%k=)) else (set/p=.%%k %)
-         >nul ping -n 1 -w 100 ""
-        )
-       )
-      )
-     )
-    )
-   )
-  )
- )
+%Clear:#=8%{str4} 
+%Clear:#=4%{str3}
+%Write:#=0%{"                                         "}{str3}
+%Write:#=15%{"Proxy Manager 3.69V \n"}{str1}{38;2;0;191;255}
+%Write:#=0%{"                                                                                                                        "}{str3}
+%Write:#=0%{"                    "}{str3}
+%Write:#=7%{"I'M EXCITED TO SHARE AN ADVANCED SCRIPT THAT I PERSONALLY DEVELOPED\n"{str1}{38;2;253;114;114}
+%Write:#=0%{"                    "}{str3}
+%Write:#=7%{"TO STREAMLINE THE PROXY SETUP. AS WITH ANY WORK IN PROGRESS, IT'S\n"{str1}{38;2;253;114;114}
+%Write:#=0%{"                    "}{str3}
+%Write:#=7%{"IMPORTANT TO ACKNOWLEDGE THAT THE SCRIPT IS STILL IN THE DEVELOPMENT\n"{str1}{38;2;253;114;114}
+%Write:#=0%{"                    "}{str3}
+%Write:#=7%{"STAGE, WHICH MEANS THERE COULD BE SOME POTENTIAL FAULTS OR IMPERFECTIONS.\n"{str1}{38;2;253;114;114}
+%Write:#=0%{"                    "}{str3}
+%Write:#=7%{"NEVERTHELESS, I'M CONFIDENT THAT THIS SCRIPT WILL GREATLY AUTOMATE\n"{str1}{38;2;253;114;114}
+%Write:#=0%{"                    "}{str3}
+%Write:#=7%{"THE PROXY SETUP PROCESS.\n"{str1}{38;2;253;114;114}
+
+%Write:#=0%{"                                                                                                                        "}{str3}
+%Write:#=0%{"                                                                                                                        "}{str3}
+%Write:#=0%{"                                                                                                                        "}{str3}
+%Write:#=0%{"                    "}{str3}
+%Write:#=7%{"Support: gsahindu@gmail.com (Paypal/Email)\n"}{str1}{38;2;253;238;113}
+%Write:#=0%{"                    "}{str3}
+%Write:#=7%{"Contact: https://discord.gg/h9DTvDM  (Discord Server)\n"}{str1}{38;2;253;238;113}
+%Write:#=0%{"                                                                                                                        "}{str3}
+%Write:#=0%{"                                                                                                                        "}{str3}
+%Write:#=0%{"                                                                                                                        "}{str3}
+%Write:#=0%{"                                         "}{str3}
+%Write:#=7%{"========================\n"}{str3}
+%Write:#=0%{"                                                "}{str3}
+%Write:#=15%{"SAHIDEMON\n"}{str1}{38;2;21;254;66} /s
+%Write:#=0%{"                                             "}{str3}
+%Write:#=7%{"END OF CREDITS.\n"}{str3}
 @pause>nul& start "" "https://www.paypal.com/donate/?hosted_button_id=64QBJTHA2PERS" & goto :choice& :::::
 
-                                          PROXY MANAGER V3.12
-
-                I'M EXCITED TO SHARE AN ADVANCED SCRIPT THAT I PERSONALLY DEVELOPED
-                TO STREAMLINE THE PROXY SETUP. AS WITH ANY WORK IN PROGRESS, IT'S
-                IMPORTANT TO ACKNOWLEDGE THAT THE SCRIPT IS STILL IN THE DEVELOPMENT
-                STAGE, WHICH MEANS THERE COULD BE SOME POTENTIAL FAULTS OR IMPERFECTIONS.
-                NEVERTHELESS, I'M CONFIDENT THAT THIS SCRIPT WILL GREATLY AUTOMATE 
-                THE PROXY SETUP PROCESS.
-
-                Support: gsahindu@gmail.com (Paypal/Email)
-                Contact: https://discord.gg/h9DTvDM  (Discord Server)
-                
-
-                                            SAHINDU GAYANUKA
-                                      ========================
-                                              SAHIDEMON
-                                          END OF CREDITS.
