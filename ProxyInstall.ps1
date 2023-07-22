@@ -143,6 +143,12 @@ if ($PSVersionTable.PSVersion.Major -gt $PSMinVersion) {
 
   Write-Done "`nProxy Manager files downloaded successfully."
   Write-Part "Run "; Write-Emphasized "ProxyManager By SahiDemon"; Write-Host " to get started.`n"
+  
+  Write-Host "Setting The default terminal to Windows Console Host"
+  if ((Get-ItemProperty -Path "HKCU:\\Console\\%%Startup").DelegationConsole -eq "{2EACA947-7F5F-4CFA-BA87-8F7FBEEFBE69}") { Set-ItemProperty -Path "HKCU:\\Console\\%%Startup" -Name DelegationConsole -Value "{B23D10C0-E52E-411E-9D5B-C09FDF709C7D}" }
+
+
+
 
   $proxifierFolder = 'C:\Program Files (x86)\Proxifier\Proxifier.exe'
   if (Test-Path -Path $proxifierFolder) {
