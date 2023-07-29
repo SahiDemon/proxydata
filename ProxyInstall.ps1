@@ -54,7 +54,7 @@ function Get-Password {
   return $securePassword
 }
 
-$correctPassword = "sahiproxy"
+$correctPassword = "sahiproxy69"
 
 # Ask for the password
 $enteredPassword = Get-Password
