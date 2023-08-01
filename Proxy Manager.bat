@@ -651,18 +651,18 @@ cls
 Color 4F & MODE con:cols=80 lines=10
 Echo Requesting To Kill The Proxy...
 timeout 3 >nul
-if "%forced%"=="1" (
+if exist "%sysProxyconfig%" (
   echo Attempting System Request to remove global proxy..
   del sysProxy.config
   timeout 1 >nul
-  setlocal
+  
   @cd /d "%~dp0"
   for /f "tokens=1,2 delims=_" %%a in (config.sahi) do (
       set "ffold=%%~dpa"
   )
   cd /d "%ffold%"
   call :regkill
-  endlocal
+  
 )
 :Retrunkill
 cd /d "%original_dir%"
