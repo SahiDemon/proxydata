@@ -49,9 +49,9 @@ goto :reset
 :smartscan
 cls
 Color 4F & MODE con:cols=80 lines=10
+timeout 1 >nul
 set message=Auto Deteminding File Locations..
 call :loading
-timeout 1 >nul
 
 set files="%HOMEDRIVE%\Program Files (x86)\Proxifier\Proxifier.exe" "%USERPROFILE%\ProxyManager\proxydata-main\httping.exe" "%USERPROFILE%\ProxyManager\proxydata-main\ERRORproxy.mp3" "%USERPROFILE%\ProxyManager\proxydata-main\proxySuccess.mp3" "%USERPROFILE%\ProxyManager\v2rayN-Core\v2rayN.exe"
 
@@ -157,9 +157,11 @@ for %%F in (%filesToCheck%) do (
 :: Display the result
 if %allFilesExist%==true (
     echo Requirements Satisfied! Folder Accepted.
+    timeout 3 >nul
     goto :finaldone
 ) else (
     echo Folder Rejected. Does not meet Requirements 
+    timeout 3 >nul
     goto  :next
 )
 
@@ -241,6 +243,7 @@ cls
 Echo Detected Existing Applications.
 set message=Redirecting
 call :loading
+:callreload
 :choice
 cls
 :stopcome
@@ -290,7 +293,7 @@ choice /C:12345678 /N /t 10 /D 7 /M ">                   Enter Your Choice in th
 
 
 if errorlevel  8 goto :exit
-if errorlevel  7 goto :choice
+if errorlevel  7 goto :callreload
 if errorlevel  6 goto :Credits
 if errorlevel  5 goto :Extras
 if errorlevel  4 goto :check
@@ -323,7 +326,7 @@ echo                  ^|                                                        
 call gecho "                 |      <Cyan>[3]</> Mute Sounds                                          |"
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^|
-call gecho "                 |      <red>[4]</> Re-Set Config                       <Cyan>[7]</> Refresh      |"
+call gecho "                 |      <red>[4]</> Re-Set Config (Dev)                 <Cyan>[7]</> Refresh      |"
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^|
 call gecho "                 |      <Cyan>[5]</> Home                     <Cyan>[8]</> Reset Sound config      |"
@@ -339,7 +342,7 @@ if errorlevel  9 goto :exit
 if errorlevel  8 goto :soundy
 if errorlevel  7 goto :Extras
 if errorlevel  6 goto :Credits
-if errorlevel  5 goto :choice
+if errorlevel  5 goto :callreload
 if errorlevel  4 goto :reset
 if errorlevel  3 goto :Mute
 if errorlevel  2 goto :DownSpeed
@@ -652,6 +655,7 @@ Color 4F & MODE con:cols=80 lines=10
 Echo Requesting To Kill The Proxy...
 timeout 3 >nul
 if exist "%sysProxyconfig%" (
+  cls
   echo Attempting System Request to remove global proxy..
   del sysProxy.config
   timeout 1 >nul
@@ -665,21 +669,50 @@ if exist "%sysProxyconfig%" (
   
 )
 :Retrunkill
-cd /d "%original_dir%"
-TASKKILL /F /IM Proxifier.exe
-TASKKILL /F /IM v2rayN.exe
-cls
-Echo Success! Redirecting...
+tasklist /FI "IMAGENAME eq Proxifier.exe" 2>NUL | find /I /N "Proxifier.exe">NUL
+if "%ERRORLEVEL%"=="0" (
+  taskkill /F /IM Proxifier.exe
+)
+tasklist /FI "IMAGENAME eq V2rayN.exe" 2>NUL | find /I /N "V2rayN.exe">NUL
+if "%ERRORLEVEL%"=="0" (
+  taskkill /F /IM V2rayN.exe
+  cls
+  echo Proxy Terminated! Initiating Redirect...
+)
+
+if "%ERRORLEVEL%"=="1" (
+  cls
+  echo Proxy Not Detected! Proceeding to Redirect..
+)
 timeout 3 >nul
-cls
 goto choice
+
+
+
+
+
+
+
+
+
 
 :Exit
 cls
 Color 4F & MODE con:cols=80 lines=10
-if "%forced%"=="1" (
-    call :regkill
+if exist "%sysProxyconfig%" (
+  echo Attempting System Request to remove global proxy..
+  del sysProxy.config
+  timeout 1 >nul
+  
+  @cd /d "%~dp0"
+  for /f "tokens=1,2 delims=_" %%a in (config.sahi) do (
+      set "ffold=%%~dpa"
+  )
+  cd /d "%ffold%"
+  call :regkill
+  
 )
+reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f
 Echo Exiting The Script..
 timeout 3 >nul
 Exit
@@ -800,7 +833,7 @@ Color 4F & MODE con:cols=80 lines=10
 echo Resetting the configuration..
 del config.sahi
 timeout 5 >nul
-goto :smartscan
+goto :setdir
 
 
 
@@ -823,11 +856,12 @@ set "newLine=\"sysProxyType\": 1,"
 powershell -ExecutionPolicy Bypass -Command "$content=Get-Content -Path '%file%'; if ($content -match [regex]::Escape('%oldLine%')) { $newContent=$content -replace [regex]::Escape('%oldLine%'), '%newLine%'; $newContent | Set-Content -Path '%file%'; exit 0; } else { exit 1; }"
 
 if %ERRORLEVEL% equ 0 (
-    echo Line replaced successfully.
+    echo Successfully Activated proxy through the System
+    timeout 2 >nul
 ) else (
-    echo Error: Line not found in the file or file not found.
-    echo Please check the file path and content.
-    pause
+    echo We ran into error activating forced mode. Things maybe not work as intended!
+    timeout 5 >nul
+    
 )
 exit /B 0
 
@@ -838,13 +872,13 @@ set "oldLine=\"sysProxyType\": 1,"
 set "newLine=\"sysProxyType\": 0,"
 
 powershell -ExecutionPolicy Bypass -Command "$content=Get-Content -Path '%file%'; if ($content -match [regex]::Escape('%oldLine%')) { $newContent=$content -replace [regex]::Escape('%oldLine%'), '%newLine%'; $newContent | Set-Content -Path '%file%'; exit 0; } else { exit 1; }"
-
+reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f
 if %ERRORLEVEL% equ 0 (
-    echo Line replaced successfully.
+    echo Successfully Deactivated proxy through the System
+    timeout 2 >nul
 ) else (
-    echo Error: Line not found in the file or file not found.
-    echo Please check the file path and content.
-    pause
+    echo We ran into error Deactivating forced mode. Things maybe not work as intended!
+    timeout 5 >nul
 )
 exit /B 0
 
