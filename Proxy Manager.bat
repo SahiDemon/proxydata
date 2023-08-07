@@ -14,9 +14,45 @@ Set "DownSpeed=Download: 00.00 MB/s"
 set "Latecy=Latency: 00.00 ms"
 Color 3F & MODE con:cols=80 lines=7
 title Proxy Manager
-set message=Initializing Proxy
+set message=Checking For Updates
 call :loading
-timeout 2 >nul
+@echo off
+setlocal
+
+set "remote_url=https://raw.githubusercontent.com/SahiDemon/proxydata/main/Proxy%%20Manager.bat"
+set "local_file_path=Proxy Manager.bat"
+
+REM Download the remote file using PowerShell
+powershell.exe -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri '%remote_url%' -OutFile '%local_file_path%.tmp'"
+
+REM Read the local file
+set "local_content="
+for /f "usebackq delims=" %%A in ("%local_file_path%") do (
+    set "local_content=%%A"
+    goto :EndLoop
+)
+:EndLoop
+
+REM Compare the contents of the remote and local files
+if not "%local_content%" == "" (
+    fc /b "%local_file_path%.tmp" "%local_file_path%" > nul
+    if errorlevel 1 (
+        move /y "%local_file_path%.tmp" "%local_file_path%" > nul
+        echo Successfully Synchronized to Lastest Version! Restarting..
+        timeout 2 >nul
+        start "" "%~dpnx0"
+    ) else (
+        del "%local_file_path%.tmp" > nul
+        echo You're up to date!
+        timeout 2 >nul
+    )
+) else (
+    echo Error: Could not read local file.
+)
+
+endlocal
+
+
 if exist config.sahi goto loadtrue
 if not exist config.sahi goto loadfail
 
@@ -36,7 +72,7 @@ cls
 echo Config Loaded Successfully!
 
 
-timeout 3 >nul
+timeout 2 >nul
 goto :resume
 ) else (
 Color 4F & MODE con:cols=80 lines=10
@@ -963,6 +999,14 @@ if %counter% LSS 5 goto loopforload
 
 exit /B 0 
 
+
+
+
+
+
+
+
+
 ::#endregion
 ::#region Credits
 :Credits
@@ -1103,5 +1147,5 @@ cls
 %Write:#=15%{"SAHIDEMON\n"}{str1}{38;2;21;254;66} /s
 %Write:#=0%{"                                             "}{str3}
 %Write:#=7%{"END OF CREDITS.\n"}{str3}
-@pause>nul& start "" "https://www.paypal.com/donate/?hosted_button_id=64QBJTHA2PERS" & goto :choice& :::::
+@pause>nul& start "" "https://paypal.me/SahinduGayanuka?country.x=PH&locale.x=en_US" & goto :choice& :::::
 
