@@ -92,7 +92,7 @@ goto :reset
 ::#region SmartScan file locations
 :smartscan
 cls
-Color 4F & MODE con:cols=80 lines=10
+color B0 & MODE con:cols=80 lines=10
 timeout 1 >nul
 set message=Auto Deteminding File Locations..
 call :loading
@@ -257,12 +257,14 @@ echo %file1%_%file2%
 
 
 FOR /F "usebackq delims=" %%i in (`cscript findDesktop.vbs`) DO SET DESKTOPDIR=%%i
-set TARGET='cmd.exe /C "%USERPROFILE%\ProxyManager\proxydata-main\Proxy Manager.bat"'
+set "TARGET=%USERPROFILE%\ProxyManager\proxydata-main\Proxy Manager.bat"
 set SHORTCUT='%DESKTOPDIR%\ProxyManager.lnk'
 set "ICONPATH=%USERPROFILE%\ProxyManager\proxydata-main\vpn.ico"
 set PWS=powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile
 
-%PWS% -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(%SHORTCUT%); $S.TargetPath = %TARGET%; $S.IconLocation = '%ICONPATH%'; $S.WorkingDirectory = '%USERPROFILE%\ProxyManager\proxydata-main\'; $S.Save()"
+%PWS% -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(%SHORTCUT%); $S.TargetPath = '%TARGET%'; $S.IconLocation = '%ICONPATH%'; $S.WorkingDirectory = '%USERPROFILE%\ProxyManager\proxydata-main\'; $S.Save()"
+
+
 
 
 ::#endregion
@@ -373,7 +375,7 @@ echo                  ^|                                                        
 call gecho "                 |      <red>[4]</> Re-Set Config (Dev)                 <Cyan>[7]</> Refresh      |"
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^|
-call gecho "                 |      <Cyan>[5]</> Home                     <Cyan>[8]</> Reset Sound config      |"
+call gecho "                 |      <Cyan>[5]</> Home                   <red>[8]</> Re-Set Config (Auto)      |"
 echo                  ^|      ___________________________________________________      ^| 
 echo                  ^|                                                               ^|
 call gecho "                 |      <Cyan>[6]</> Credits                                <Cyan>[9]</> Exit      |"
@@ -383,7 +385,7 @@ echo:
 choice /C:123456789 /N /t 5 /D 7 /M ">                   Enter Your Choice in the Keyboard [1,2,3,4,5,6,7,8,9] : "    
 
 if errorlevel  9 goto :exit
-if errorlevel  8 goto :soundy
+if errorlevel  8 goto :resetauto
 if errorlevel  7 goto :Extras
 if errorlevel  6 goto :Credits
 if errorlevel  5 goto :callreload
@@ -874,10 +876,21 @@ exit /B 0
 :reset
 cls
 Color 4F & MODE con:cols=80 lines=10
-echo Resetting the configuration..
+echo Resetting the configuration for mannual reset..
 del config.sahi
 timeout 5 >nul
 goto :setdir
+
+:resetauto
+cls
+Color 4F & MODE con:cols=80 lines=10
+echo Resetting the configuration for Automatic reset..
+del config.sahi
+timeout 5 >nul
+goto :loadfail
+
+
+
 
 
 
