@@ -2,6 +2,11 @@
 
 @echo off
 call proxyintro.bat
+set "WindowTitle=Proxy Manager 4.0.1V"
+
+:: Activate the window by its title
+powershell -Command "$app = (Get-Process | Where-Object {$_.MainWindowTitle -match '%WindowTitle%'}); if ($app) {$app | ForEach-Object { $handle = $_.MainWindowHandle; [Microsoft.VisualBasic.Interaction]::AppActivate($handle) } }"
+
 @setlocal enableextensions
 @cd /d "%~dp0"
 set "original_dir=%cd%"
@@ -10,10 +15,12 @@ set /a "forced=0"
 set soundConfigFile=sound.config
 set sysProxyconfig=sysProxy.config
 SET /a "passfail=0"
+set "iconBase64=vpn.ico"
+echo %iconBase64% ^| base64 -d > %temp%\icon.ico
 Set "DownSpeed=Download: 00.00 MB/s"
 set "Latecy=Latency: 00.00 ms"
 Color 3F & MODE con:cols=80 lines=7
-title Proxy Manager
+title Proxy Manager 4.0.1V
 set message=Checking For Updates
 call :loading
 @echo off
@@ -250,7 +257,7 @@ echo %file1%_%file2%
 
 
 FOR /F "usebackq delims=" %%i in (`cscript findDesktop.vbs`) DO SET DESKTOPDIR=%%i
-set TARGET='%USERPROFILE%\ProxyManager\proxydata-main\Proxy Manager.bat'
+set TARGET='cmd.exe /C "%USERPROFILE%\ProxyManager\proxydata-main\Proxy Manager.bat"'
 set SHORTCUT='%DESKTOPDIR%\ProxyManager.lnk'
 set "ICONPATH=%USERPROFILE%\ProxyManager\proxydata-main\vpn.ico"
 set PWS=powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile
