@@ -41,9 +41,10 @@ if not "%local_content%" == "" (
         echo Successfully Synchronized to Lastest Version! Restarting..
         timeout 2 >nul
         start "" "%~dpnx0"
+        exit
     ) else (
         del "%local_file_path%.tmp" > nul
-        echo You're up to date!
+        echo Yay! You're up to date!
         timeout 2 >nul
     )
 ) else (
