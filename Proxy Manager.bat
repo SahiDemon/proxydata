@@ -2,7 +2,7 @@
 
 @echo off
 call proxyintro.bat
-set "WindowTitle=Proxy Manager 4.0.1V"
+set "WindowTitle=Proxy Manager 4.0.1v"
 
 :: Activate the window by its title
 powershell -Command "$app = (Get-Process | Where-Object {$_.MainWindowTitle -match '%WindowTitle%'}); if ($app) {$app | ForEach-Object { $handle = $_.MainWindowHandle; [Microsoft.VisualBasic.Interaction]::AppActivate($handle) } }"
@@ -17,8 +17,8 @@ set sysProxyconfig=sysProxy.config
 SET /a "passfail=0"
 set "iconBase64=vpn.ico"
 echo %iconBase64% ^| base64 -d > %temp%\icon.ico
-Set "DownSpeed=Download: 00.00 MB/s"
-set "Latecy=Latency: 00.00 ms"
+Set "DownSpeed=Download: On Standby"
+set "Latecy=Latency:  Standby"
 Color 3F & MODE con:cols=80 lines=7
 title Proxy Manager 4.0.1V
 set message=Checking For Updates
@@ -614,6 +614,7 @@ cls
 set /a "passfail=1"
 call :soundscucess
 echo Proxy Success! Redirecting to Menu
+Set "DownSpeed=Determining speed..."
 timeout 4 >nul
 goto stopcome
 
