@@ -614,7 +614,7 @@ cls
 set /a "passfail=1"
 call :soundscucess
 echo Proxy Success! Redirecting to Menu
-Set "DownSpeed=Determining speed..."
+Set "DownSpeed=Determining speed.."
 timeout 4 >nul
 goto stopcome
 
