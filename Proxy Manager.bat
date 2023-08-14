@@ -25,38 +25,38 @@ title Proxy Manager 4.0.1V
 set message=Checking For Updates
 call :loading
 
-@REM @cd /d "%~dp0"
-@REM if exist "%sysProxyconfig%" (
-@REM   cls
-@REM   echo Auto Skipping Update Process Due Previous Application Crash
-@REM   timeout 3 >nul
-@REM   goto :connectionfine
+@cd /d "%~dp0"
+if exist "%sysProxyconfig%" (
+  cls
+  echo Auto Skipping Update Process Due Previous Application Crash
+  timeout 3 >nul
+  goto :connectionfine
 
-@REM )
-@REM cd /d "%original_dir%"
-
-
-@REM ping www.github.com
-@REM if %errorlevel%==0 (
-@REM     goto :connectionfine
-@REM ) else (
-@REM     echo Whoopsie-daisy! Looks like the internet is on vacation.
-@REM     timeout 1 >nul
-@REM     goto :brokenconn
-@REM )
-
-@REM :brokenconn
-@REM Color 4F & MODE con:cols=80 lines=10
-@REM set /P b= (skipping may cause errors!) Would you like to bypass the update process? (Y/N)?
-@REM if /I "%b%" EQU "Y" goto :connectionfine
-@REM if /I "%b%" EQU "N" goto :abortconn
+)
+cd /d "%original_dir%"
 
 
-@REM :abortconn
-@REM cls
-@REM echo Exiting the script..
-@REM timeout 3 >nul
-@REM exit
+ping www.github.com >nul
+if %errorlevel%==0 (
+    goto :connectionfine
+) else (
+    echo Whoopsie-daisy! Looks like the internet is on vacation.
+    timeout 1 >nul
+    goto :brokenconn
+)
+
+:brokenconn
+Color 4F & MODE con:cols=80 lines=10
+set /P b= (skipping may cause errors!) Would you like to bypass the update process? (Y/N)?
+if /I "%b%" EQU "Y" goto :connectionfine
+if /I "%b%" EQU "N" goto :abortconn
+
+
+:abortconn
+cls
+echo Exiting the script..
+timeout 3 >nul
+exit
 
 
 :connectionfine
