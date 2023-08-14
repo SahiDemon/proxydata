@@ -23,40 +23,7 @@ Color 3F & MODE con:cols=80 lines=7
 title Proxy Manager 4.0.1V
 
 
-@REM @cd /d "%~dp0"
-@REM if exist "%sysProxyconfig%" (
-@REM   cls
-@REM   echo Auto Skipping Update Process Due Previous Application Crash
-@REM   timeout 3 >nul
-@REM   goto :connectionfine
 
-@REM )
-@REM cd /d "%original_dir%"
-
-@REM set message=Checking For Updates
-@REM call :loading
-
-@REM ping www.github.com
-@REM if %errorlevel%==0 (
-@REM     goto :connectionfine
-@REM ) else (
-@REM     echo Whoopsie-daisy! Looks like the internet is on vacation.
-@REM     timeout 1 >nul
-@REM     goto :brokenconn
-@REM )
-
-@REM :brokenconn
-@REM Color 4F & MODE con:cols=80 lines=10
-@REM set /P b= (skipping may cause errors!) Would you like to bypass the update process? (Y/N)?
-@REM if /I "%b%" EQU "Y" goto :connectionfine
-@REM if /I "%b%" EQU "N" goto :abortconn
-
-
-@REM :abortconn
-@REM cls
-@REM echo Exiting the script..
-@REM timeout 3 >nul
-@REM exit
 
 
 :connectionfine
