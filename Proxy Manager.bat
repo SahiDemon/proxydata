@@ -21,9 +21,45 @@ Set "DownSpeed=Download: On Standby"
 set "Latecy=Latency:  Standby"
 Color 3F & MODE con:cols=80 lines=7
 title Proxy Manager 4.0.1V
+
+
+@cd /d "%~dp0"
+if exist "%sysProxyconfig%" (
+  cls
+  echo Auto Skipping Update Process Due Previous Application Crash
+  timeout 3 >nul
+  goto :connectionfine
+
+)
+cd /d "%original_dir%"
+
 set message=Checking For Updates
 call :loading
-@echo off
+
+ping www.github.com
+if %errorlevel%==0 (
+    goto :connectionfine
+) else (
+    echo Whoopsie-daisy! Looks like the internet is on vacation.
+    timeout 1 >nul
+    goto :brokenconn
+)
+
+:brokenconn
+Color 4F & MODE con:cols=80 lines=10
+set /P b= (skipping may cause errors!) Would you like to bypass the update process? (Y/N)?
+if /I "%b%" EQU "Y" goto :connectionfine
+if /I "%b%" EQU "N" goto :abortconn
+
+
+:abortconn
+cls
+echo Exiting the script..
+timeout 3 >nul
+exit
+
+
+:connectionfine
 setlocal
 
 set "remote_url=https://raw.githubusercontent.com/SahiDemon/proxydata/main/Proxy%%20Manager.bat"
@@ -969,7 +1005,7 @@ rem Set the counter variable
 set counter=0
 
 :loopforload
-set delay=200
+set delay=150
 set ms1counter=0
 set ms2counter=0
 set ms3counter=0
