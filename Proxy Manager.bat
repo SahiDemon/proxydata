@@ -2,7 +2,7 @@
 
 @echo off
 call proxyintro.bat
-set "WindowTitle=Proxy Manager 4.0.1v"
+set "WindowTitle=Proxy Manager 4.0.3v"
 
 :: Activate the window by its title
 powershell -Command "$app = (Get-Process | Where-Object {$_.MainWindowTitle -match '%WindowTitle%'}); if ($app) {$app | ForEach-Object { $handle = $_.MainWindowHandle; [Microsoft.VisualBasic.Interaction]::AppActivate($handle) } }"
