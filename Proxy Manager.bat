@@ -1005,7 +1005,7 @@ rem Set the counter variable
 set counter=0
 
 :loopforload
-set delay=150
+set delay=200
 set ms1counter=0
 set ms2counter=0
 set ms3counter=0
