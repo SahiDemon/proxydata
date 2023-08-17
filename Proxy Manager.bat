@@ -94,9 +94,11 @@ if not "%local_content%" == "" (
         del "%local_file_path%.tmp" > nul
         echo Yay! You're up to date!
         timeout 2 >nul
+        goto :continuescript
     )
 ) else (
     echo Error: Could not read local file.
+    goto :continuescript
 )
 
 endlocal
@@ -105,15 +107,18 @@ endlocal
 cls
 echo Auto Skipping Update Process Due Opened Applications
 timeout 2 >nul
-
+goto :continuescript
 
 :skipupdate
 cls
 echo Skipping Update Process..
 timeout 2 >nul
+goto :continuescript
 
 
 
+
+:continuescript
 if exist config.sahi goto loadtrue
 if not exist config.sahi goto loadfail
 
