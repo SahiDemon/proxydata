@@ -22,44 +22,49 @@ set "Latecy=Latency:  Standby"
 Color 3F & MODE con:cols=80 lines=7
 title Proxy Manager 4.0.1V
 
+echo Checking the Environment..
+setlocal
+
+REM Check if Proxifier is running
+tasklist /fi "imagename eq proxifier.exe" | find /i "proxifier.exe" >nul
+if not errorlevel 1 goto :AbortConnection
+
+@REM ping 8.8.8.8 -n 1 >nul
+@REM if errorlevel 1 goto :nointernet
+@REM goto :ConnectionFine
+
+FOR /F "tokens=* USEBACKQ" %%F IN (`httping.exe -count 2 -url https://github.com`) DO (
+SET varc=%%F
+SET "newww=All probes failed"
+)
+if /I "%varc%" == "%newww%"  goto :nointernet
+goto :ConnectionFine
+
+
+
+:nointernet
+cls
+Color 4F
+echo Whoopsie-daisy! Looks like the your internet is on vacation.
+echo.
+set /P b= Would you like to bypass the update process? (Y/N)?
+if /I "%b%" EQU "Y" goto :skipupdate
+if /I "%b%" EQU "N" goto :dead
+
+:dead
+cls
+echo Exiting the script due to failed internet Connection
+timeout 2 >nul
+exit
+
+
+
+:ConnectionFine
+cls
+
 set message=Checking For Updates
 call :loading
 
-@REM @cd /d "%~dp0"
-@REM if exist "%sysProxyconfig%" (
-@REM   cls
-@REM   echo Auto Skipping Update Process Due Previous Application Crash
-@REM   timeout 3 >nul
-@REM   goto :connectionfine
-
-@REM )
-@REM cd /d "%original_dir%"
-
-
-@REM ping www.github.com >nul
-@REM if %errorlevel%==0 (
-@REM     goto :connectionfine
-@REM ) else (
-@REM     echo Whoopsie-daisy! Looks like the internet is on vacation.
-@REM     timeout 1 >nul
-@REM     goto :brokenconn
-@REM )
-
-@REM :brokenconn
-@REM Color 4F & MODE con:cols=80 lines=10
-@REM set /P b= (skipping may cause errors!) Would you like to bypass the update process? (Y/N)?
-@REM if /I "%b%" EQU "Y" goto :connectionfine
-@REM if /I "%b%" EQU "N" goto :abortconn
-
-
-@REM :abortconn
-@REM cls
-@REM echo Exiting the script..
-@REM timeout 3 >nul
-@REM exit
-
-
-:connectionfine
 setlocal
 
 set "remote_url=https://raw.githubusercontent.com/SahiDemon/proxydata/main/Proxy%%20Manager.bat"
@@ -95,6 +100,18 @@ if not "%local_content%" == "" (
 )
 
 endlocal
+
+:AbortConnection
+cls
+echo Auto Skipping Update Process Due Opened Applications
+timeout 2 >nul
+
+
+:skipupdate
+cls
+echo Skipping Update Process..
+timeout 2 >nul
+
 
 
 if exist config.sahi goto loadtrue
