@@ -372,6 +372,7 @@ goto detectedfull
 cls
 Echo Detected Existing Applications.
 :callreload
+:MainMenuon
 :choice
 cls
 :stopcome
@@ -542,7 +543,7 @@ choice /C:123456789 /N /t 10 /D 9 /M ">                   Enter Your Choice in t
 if errorlevel  9 goto :devcall
 if errorlevel  8 goto :exit
 if errorlevel  7 goto :Credits
-if errorlevel  6 goto :callreload
+if errorlevel  6 goto :MainMenuon
 if errorlevel  5 goto :WIP
 if errorlevel  4 goto :WIP
 if errorlevel  3 goto :restartscript
