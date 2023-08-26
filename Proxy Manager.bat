@@ -441,6 +441,15 @@ if errorlevel  1 goto :start
 ::#endregion
 ::#region SubMenu EXTRA
 :Extras
+if not exist "sound.config" (
+  set "soundtoggle=OFF" 
+  set "soundop=UNMUTED"
+  set "soundcolor=grey"
+) else (
+  set "soundtoggle=ON"
+  set "soundop= MUTED "
+  set "soundcolor=Green"
+)
 cls 
 color 07 & mode con:cols=98 lines=36
 echo:  
@@ -462,7 +471,7 @@ call gecho "                 |      <Cyan>[1]</> Add a proxy Server             
 echo                  ^|                                                               ^|
 call gecho "                 |      <Cyan>[2]</> Check Download Speed                                 |"
 echo                  ^|                                                               ^|
-call gecho "                 |      <Cyan>[3]</> Mute Sounds                                          |"
+call gecho "                 |      <Cyan>[3]</> Mute Sounds                  Status : <%soundcolor%>[%soundop%]</>      |"
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^|
 call gecho "                 |      <red>[4]</> DEV MODE                            <Cyan>[9]</> Refresh      |"
@@ -570,7 +579,38 @@ if /I "%toggle%"=="ON" (
 goto :devcall
 
 
+:Mute
+if /I "%soundtoggle%"=="ON" (
+  set "soundtoggle=OFF" 
+  set "soundop=UNMUTED"
+  set "soundcolor=grey"
+  del sound.config
+  goto :Extras
+)
+set "soundtoggle=ON"
+if /I "%soundtoggle%"=="ON" (
+  set "soundop= MUTED "
+  set "soundcolor=Green"
+  (echo sound muted)>sound.config
+)
+goto :Extras
 
+
+
+
+:truesound
+cls
+echo Sounds Muted..
+timeout 2 >nul
+
+goto :choice
+
+:falsesound
+cls
+echo Sounds Unmuted..
+timeout 2 >nul
+del sound.config
+goto :choice
 
 
 
@@ -1347,26 +1387,6 @@ if %ERRORLEVEL% equ 0 (
 )
 exit /B 0
 
-:Mute
-cls
-Color 4F & MODE con:cols=80 lines=10
-set /P e=   Do you want to Mute Sounds (Y/N)?
-if /I "%e%" EQU "Y" goto :truesound
-if /I "%e%" EQU "N" goto :falsesound
-
-:truesound
-cls
-echo Sounds Muted..
-timeout 2 >nul
-(echo sound muted)>sound.config
-goto :choice
-
-:falsesound
-cls
-echo Sounds Unmuted..
-timeout 2 >nul
-del sound.config
-goto :choice
 
 
 
