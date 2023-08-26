@@ -2,7 +2,7 @@
 
 @echo off
 call proxyintro.bat
-set "WindowTitle=Proxy Manager 4.5.0v"
+set "WindowTitle=Proxy Manager 5.1.2v"
 
 :: Activate the window by its title
 powershell -Command "$app = (Get-Process | Where-Object {$_.MainWindowTitle -match '%WindowTitle%'}); if ($app) {$app | ForEach-Object { $handle = $_.MainWindowHandle; [Microsoft.VisualBasic.Interaction]::AppActivate($handle) } }"
@@ -12,15 +12,38 @@ powershell -Command "$app = (Get-Process | Where-Object {$_.MainWindowTitle -mat
 set "original_dir=%cd%"
 SET /a "St=0"
 set /a "forced=0"
+set "main=OFF"
+set "astatus=IDLE"
+set "sstatus=IDLE"
+set "lstatus=IDLE"
+set "dstatus=IDLE"
+set "kcolor=Grey"
+set "scolor=grey"
+Set "rcolor=grey"
+Set "lcolor=grey"
 set soundConfigFile=sound.config
 set sysProxyconfig=sysProxy.config
 SET /a "passfail=0"
+SET "mcolor=DarkGray"
 set "iconBase64=vpn.ico"
 echo %iconBase64% ^| base64 -d > %temp%\icon.ico
 Set "DownSpeed=Download: On Standby"
 set "Latecy=Latency:  Standby"
 Color 3F & MODE con:cols=80 lines=7
-title Proxy Manager 4.5.0v
+title Proxy Manager 5.1.2v
+
+cls
+@cd /d "%~dp0"
+if exist "Maintanace.config" (
+  cls
+  color 04
+  echo Skipping All Processes Due to Maintanace Mode
+  title Maintanace Mode - Proxy Manager
+  timeout 3 >nul
+  goto :callreload
+)
+
+
 
 echo Checking the Environment..
 setlocal
@@ -345,8 +368,6 @@ goto detectedfull
 :detectedfull
 cls
 Echo Detected Existing Applications.
-set message=Redirecting
-call :loading
 :callreload
 :choice
 cls
@@ -361,7 +382,7 @@ SET DownSpeed=%%B %%C %%D
 
 ::#endregion
 ::#region MainMenu
-color 07 & mode con:cols=98 lines=34
+color 07 & mode con:cols=98 lines=36
 echo.  
 echo.                                           
 echo                   _______________________________________________________________
@@ -376,43 +397,54 @@ echo                  ^|                                                        
 call gecho "                 |      <Cyan>%Latency%               <Cyan>%DownSpeed%</>      |"
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^| 
-call gecho "                 |      <%sbutton%>[1]<%start%> Activate Proxy (Recommended)        - SmartMode </>     |      "
+call gecho "                 |      <%sbutton%>[1]<%start%> Activate Proxy                  Status : <%scolor%>[%astatus%]</>      |      "
 echo                  ^|                                                               ^|
-call gecho "                 |      <%rbutton%>[2]<%restart%> Activate Proxy (Forced)           - Forced Mode </>     |   "
+call gecho "                 |      <%pbutton%>[2]<%pmode%> Leak Prevention Mode            Status : <%lcolor%>[%lstatus%] </>     |   "
 echo                  ^|                                                               ^|
-call gecho "                 |      <%kbutton%>[3]<%kill%> Deactivate Proxy                - Make inactive  </>    |    "
+call gecho "                 |      <%rbutton%>[3]<%restart%> System Wide Proxy               Status : <%rcolor%>[%sstatus%] </>     |   "
+echo                  ^|                                                               ^|
+call gecho "                 |      <%kbutton%>[4]<%kill%> Deactivate Proxy                Status : <%kcolor%>[%dstatus%]  </>    |    "
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^|
-call gecho "                 |      <Cyan>[4]</> Re-Check Proxy               <Cyan>[9]</> Re-Fresh Proxy      |"
+call gecho "                 |      <Cyan>[5]</> Re-Check Proxy                                       |"
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^|
-call gecho "                 |      <Cyan>[5]</> Extras                              <Cyan>[7]</> Refresh      |"
+call gecho "                 |      <Cyan>[6]</> Add-Ons                             <Cyan>[8]</> Refresh      |"
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^|
-call gecho "                 |      <Cyan>[6]</> Credits                                <Cyan>[8]</> Exit      |"
+call gecho "                 |      <Cyan>[7]</> Donate                                <Cyan>[9]</> Exit       |"
 echo                  ^|                                                               ^|
 echo                  ^|_______________________________________________________________^|
 echo.          
-choice /C:12345678 /N /t 10 /D 7 /M ">                   Enter Your Choice in the Keyboard [1,2,3,4,5,6,7,8] : "    
+choice /C:123456789 /N /t 10 /D 8 /M ">                   Enter Your Choice in the Keyboard [1,2,3,4,5,6,7,8,9] : "    
 
 
-if errorlevel  8 goto :exit
-if errorlevel  7 goto :callreload
-if errorlevel  6 goto :Credits
-if errorlevel  5 goto :Extras
-if errorlevel  4 goto :check
-if errorlevel  3 goto :kill
-if errorlevel  2 goto :forced
+
+
+
+
+
+
+
+if errorlevel  9 goto :exit
+if errorlevel  8 goto :callreload
+if errorlevel  7 goto :Credits
+if errorlevel  6 goto :Extras
+if errorlevel  5 goto :check
+if errorlevel  4 goto :kill
+if errorlevel  3 goto :forced
+if errorlevel  2 goto :prevention
 if errorlevel  1 goto :start
 ::#endregion
-::#region SubMenu
+::#region SubMenu EXTRA
 :Extras
 cls 
-color 07 & mode con:cols=98 lines=34
+color 07 & mode con:cols=98 lines=36
 echo:  
 echo:                                           
 echo                   _______________________________________________________________
 echo                  ^|                                                               ^| 
+echo                  ^|                                                               ^|
 echo                  ^|                                                               ^|
 echo                  ^|             	   	                                         ^|
 if /I "%passfail%" == "0" call :nochoice
@@ -420,7 +452,7 @@ if /I "%passfail%" == "1" call :passchoice
 if /I "%passfail%" == "2" call :failchoice  
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^| 
-call gecho "                 |     <yellow> Extras                                  <Cyan>[5] Go Back </>     |"
+call gecho "                 |     <yellow> Extras                                  <Cyan>[6] Go Back </>     |"
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^| 
 call gecho "                 |      <Cyan>[1]</> Add a proxy Server                                   |"
@@ -430,31 +462,145 @@ echo                  ^|                                                        
 call gecho "                 |      <Cyan>[3]</> Mute Sounds                                          |"
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^|
-call gecho "                 |      <red>[4]</> Re-Set Config (Dev)                 <Cyan>[7]</> Refresh      |"
+call gecho "                 |      <red>[4]</> DEV MODE                            <Cyan>[9]</> Refresh      |"
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^|
-call gecho "                 |      <Cyan>[5]</> Home                   <red>[8]</> Re-Set Config (Auto)      |"
+call gecho "                 |      <red>[5]</> Re-Set Config (Auto)                <Cyan>[7]</> Donate       |"
 echo                  ^|      ___________________________________________________      ^| 
 echo                  ^|                                                               ^|
-call gecho "                 |      <Cyan>[6]</> Credits                                <Cyan>[9]</> Exit      |"
+call gecho "                 |      <Cyan>[6]</> Home                                <Cyan>[8]</> Exit         |"
+echo                  ^|                                                               ^|
 echo                  ^|                                                               ^|
 echo                  ^|_______________________________________________________________^|
 echo:          
-choice /C:123456789 /N /t 5 /D 7 /M ">                   Enter Your Choice in the Keyboard [1,2,3,4,5,6,7,8,9] : "    
+choice /C:123456789 /N /t 10 /D 9 /M ">                   Enter Your Choice in the Keyboard [1,2,3,4,5,6,7,8] : "    
 
-if errorlevel  9 goto :exit
-if errorlevel  8 goto :resetauto
-if errorlevel  7 goto :Extras
-if errorlevel  6 goto :Credits
-if errorlevel  5 goto :callreload
-if errorlevel  4 goto :reset
+if errorlevel  9 goto :Extras
+if errorlevel  8 goto :exit
+if errorlevel  7 goto :Credits
+if errorlevel  6 goto :callreload
+if errorlevel  5 goto :resetauto
+if errorlevel  4 goto :DEV
 if errorlevel  3 goto :Mute
 if errorlevel  2 goto :DownSpeed
 if errorlevel  1 goto :add
 
 
 ::#endregion
-::#region WIP
+::#region SubMenu DEV
+:devcall
+:DEV
+cls 
+color 07 & mode con:cols=98 lines=36
+echo:  
+echo:                                           
+echo                   _______________________________________________________________
+echo                  ^|                                                               ^| 
+echo                  ^|                                                               ^|
+echo                  ^|                                                               ^|
+echo                  ^|             	   	                                         ^|
+if /I "%passfail%" == "0" call :nochoice
+if /I "%passfail%" == "1" call :passchoice
+if /I "%passfail%" == "2" call :failchoice  
+echo                  ^|      ___________________________________________________      ^|
+echo                  ^|                                                               ^| 
+call gecho "                 |     <red> DEVMODE                                 <Cyan>[6] Go Back </>     |"
+echo                  ^|      ___________________________________________________      ^|
+echo                  ^|                                                               ^| 
+call gecho "                 |      <Cyan>[1]</> Maintenance Mode                 Status : [<%mcolor%>%main%</>]      |"
+echo                  ^|                                                               ^|
+call gecho "                 |      <Cyan>[2]</> Re-Set Config                                        |"
+echo                  ^|                                                               ^|
+call gecho "                 |      <Cyan>[3]</> WIP                                                  |"
+echo                  ^|      ___________________________________________________      ^|
+echo                  ^|                                                               ^|
+call gecho "                 |      <red>[4]</> WIP                                 <Cyan>[9]</> Refresh      |"
+echo                  ^|      ___________________________________________________      ^|
+echo                  ^|                                                               ^|
+call gecho "                 |      <red>[5]</> WIP                                 <Cyan>[7]</> Donate       |"
+echo                  ^|      ___________________________________________________      ^| 
+echo                  ^|                                                               ^|
+call gecho "                 |      <Cyan>[6]</> Home                                <Cyan>[8]</> Exit         |"
+echo                  ^|                                                               ^|
+echo                  ^|                                                               ^|
+echo                  ^|_______________________________________________________________^|
+echo:          
+choice /C:123456789 /N /t 10 /D 9 /M ">                   Enter Your Choice in the Keyboard [1,2,3,4,5,6,7,8,9] : "    
+
+if errorlevel  9 goto :devcall
+if errorlevel  8 goto :exit
+if errorlevel  7 goto :Credits
+if errorlevel  6 goto :callreload
+if errorlevel  5 goto :WIP
+if errorlevel  4 goto :WIP
+if errorlevel  3 goto :WIP
+if errorlevel  2 goto :reset
+if errorlevel  1 goto :maintain
+
+
+
+:WIP
+cls
+Color 04 & MODE con:cols=120 lines=10
+echo Well, well! If this isn't the exclusive admin zone, my sincerest apologies for this daring 
+echo escapade into the forbidden realm. Exit stage left, I shall!
+timeout 5 >nul
+goto :callreload
+
+
+
+
+:maintain
+if /I "%toggle%"=="ON" (
+  set "toggle=OFF" 
+  set "main=OFF"
+  set "mcolor=grey"
+  del Maintanace.config
+  goto :devcall
+)
+set "toggle=ON"
+if /I "%toggle%"=="ON" (
+  set "main=ON "
+  set "mcolor=Green"
+  (echo update stopped=true;)>Maintanace.config
+)
+goto :devcall
+
+
+
+
+
+
+
+
+
+
+
+
+@REM :stopup
+@REM cls
+@REM echo Do you want to stop updates? (Y/N)
+@REM set /P u=   
+@REM if /I "%u%" EQU "Y" goto :stopUpdates
+@REM if /I "%u%" EQU "N" goto :continueUpdates
+
+@REM :stopUpdates
+@REM echo Maintanace Mode Enabled!
+@REM (echo update stopped=true;)>Maintanace.config
+@REM timeout 2 >nul
+@REM goto :callreload
+
+@REM :continueUpdates
+@REM echo  Maintanace Mode Disabled!
+@REM timeout 2 >nul
+@REM del Maintanace.config
+@REM goto :callreload
+
+
+
+
+
+::#endregion
 :manualspeed
 if  exist "speedtest.exe" (
   start sptest.vbs
@@ -464,18 +610,93 @@ echo Files are missing to start the speedtest! Please download the files and pla
 timeout 3 >nul
 goto :choice
  
-:devmode
-color 70  & mode con:cols=100 lines=15
-echo Devmode
-echo.
-if /I "%d%" EQU "A" goto :devmode
+
+::#region preventionmode
+
+
+:prevention
+set "ptoggle=ON"
+if /I "%ptoggle%"=="ON" (
+  set "astatus=OFF "
+  set "sstatus=OFF "
+  set "lstatus= ON "
+  set "dstatus=OFF "
+  set "scolor=red"
+  set "lcolor=green"
+  set "rcolor=red"
+  set "kcolor=red"
+  
+)
+SET "pmode=green"
+SET "pbutton=green"
 cls
-goto :devmode
+Color 3F & MODE con:cols=80 lines=7
+echo Make sure to kill the proxy before exiting the script! 
+timeout 2 >nul
+(echo prevention=true)>prevention.config
+tasklist /FI "IMAGENAME eq Proxifier.exe" 2>NUL | find /I /N "Proxifier.exe">NUL
+if "%ERRORLEVEL%"=="0" (
+  taskkill /F /IM Proxifier.exe
+
+)
+
+set "filePath=%APPDATA%\Proxifier4\Profiles\newProxy.ppx"
+set "tempFilePath=%temp%\temp_proxy.ppx"
+set "errorFlag="
+
+powershell -Command "(Get-Content -Path '%filePath%') -replace [regex]::Escape('<LeakPreventionMode enabled=\"false\" />'), '<LeakPreventionMode enabled=\"true\" />' -replace [regex]::Escape('<AutoModeDetection enabled=\"true\" />'), '<AutoModeDetection enabled=\"false\" />' -replace [regex]::Escape('<BlockNonATypes enabled=\"false\" />'), '<BlockNonATypes enabled=\"true\" />' -replace [regex]::Escape('<Udp mode=\"mode_bypass\" />'), '<Udp mode=\"mode_block_all\" />' | Set-Content -Path '%tempFilePath%'"
+
+if %ERRORLEVEL% equ 0 (
+    move /y "%tempFilePath%" "%filePath%" >nul
+    cls
+    echo Successfully enabled necessary features.
+    timeout 2 >nul
+) else (
+    set "errorFlag=true"
+)
+
+if not defined errorFlag (
+    echo Activated Data Prevention Mode.
+    timeout 2 >nul
+    goto :preventioncon
+) else (
+    echo Encountered an error while enabling features. Things may not work as intended.
+    timeout 5 >nul
+    goto :callreload
+)
+
+
+:preventioncon
+tasklist /FI "IMAGENAME eq V2rayN.exe" 2>NUL | find /I /N "V2rayN.exe">NUL
+if "%ERRORLEVEL%"=="1" (
+  call :startv
+)
+call :startp
+timeout 3 >nul
+goto :callreload
+
+
+
+
+::#endregion
+::#region ForcedMode 
+
 
 
 
 
 :forced
+set "ftoggle=ON"
+if /I "%ftoggle%"=="ON" (
+  set "astatus=OFF "
+  set "sstatus= ON "
+  set "lstatus=OFF "
+  set "dstatus=OFF "
+  set "scolor=red"
+  set "lcolor=red"
+  set "rcolor=green"
+  set "kcolor=red"
+)
 cls
 SET "kbutton=red"
 SET "rbutton=green"
@@ -505,7 +726,25 @@ endlocal
 cd /d "%original_dir%"
 call :startv
 cls
-echo Deteminding the proxy state..
+setlocal enabledelayedexpansion
+
+set "sentences[1]=Grabbing our virtual tools and giving the proxy a quick digital once-over."
+set "sentences[2]=Riding code waves to spot any glitches in the proxy's digital jungle."
+set "sentences[3]=Snapping data pics to keep the proxy's tech style on point."
+set "sentences[4]=Digital campfire chat to make sure the proxy's feeling "byte"-tastic."
+set "sentences[5]=Dancing through code to check if the proxy's in sync with the tech beat."
+set "sentences[6]=Keeping our tech poker faces on while analyzing the proxy's digital demeanor."
+set "sentences[7]=Tech sheriffs ensuring the proxy state stays glitch-free."
+set "sentences[8]=Giving scores for the proxy's coding charisma on our tech reality show."
+set "sentences[9]=Pampering the proxy with digital relaxation, keeping its state zen."
+
+set /a "randomIndex=!random! %% 9 + 1"
+
+echo !sentences[%randomIndex%]!
+
+endlocal
+
+
 timeout 2 >nul
 goto :networkcheck
 
@@ -516,6 +755,17 @@ goto :networkcheck
 ::#endregion
 ::#region StartProxyApps
 :Start
+set "atoggle=ON"
+if /I "%atoggle%"=="ON" (
+  set "astatus= ON "
+  set "sstatus=OFF "
+  set "lstatus=OFF "
+  set "dstatus=OFF "
+  set "scolor=green"
+  set "lcolor=red"
+  set "rcolor=red"
+  set "kcolor=red"
+)
 SET "kbutton=red"
 SET "rbutton=red"
 SET "sbutton=green"
@@ -551,8 +801,24 @@ call :startall
 :check
 Color 3F & MODE con:cols=80 lines=7
 cls
-echo Deteminding the proxy state..
-timeout 2 >nul
+setlocal enabledelayedexpansion
+
+set "sentences[1]=Grabbing our virtual tools and giving the proxy a quick digital once-over."
+set "sentences[2]=Riding code waves to spot any glitches in the proxy's digital jungle."
+set "sentences[3]=Snapping data pics to keep the proxy's tech style on point."
+set "sentences[4]=Digital campfire chat to make sure the proxy's feeling "byte"-tastic."
+set "sentences[5]=Dancing through code to check if the proxy's in sync with the tech beat."
+set "sentences[6]=Keeping our tech poker faces on while analyzing the proxy's digital demeanor."
+set "sentences[7]=Tech sheriffs ensuring the proxy state stays glitch-free."
+set "sentences[8]=Giving scores for the proxy's coding charisma on our tech reality show."
+set "sentences[9]=Pampering the proxy with digital relaxation, keeping its state zen."
+
+set /a "randomIndex=!random! %% 9 + 1"
+
+echo !sentences[%randomIndex%]!
+
+endlocal
+timeout 3 >nul
 :retry
 tasklist /FI "IMAGENAME eq v2rayN.exe" 2>NUL | find /I /N "v2rayN.exe">NUL
 if "%ERRORLEVEL%"=="1" goto noded
@@ -688,6 +954,8 @@ SET "start=white"
 SET "start=white"
 SET "kill=white"
 SET "restart=White"
+SET "pmode=White"
+SET "pbutton=red"
 @REM SET "kbutton=red"
 @REM SET "rbutton=red"
 @REM SET "sbutton=green"
@@ -708,6 +976,9 @@ SET "color=DarkRed"
 SET "start=White"
 SET "kill=White"
 SET "restart=White"
+SET "pmode=White"
+SET "pbutton=DarkGray"
+
 @REM SET "kbutton=DarkGray"
 @REM SET "rbutton=DarkGray"
 @REM SET "sbutton=DarkGray"
@@ -729,6 +1000,8 @@ SET "restart=White"
 SET "kbutton=DarkGray"
 SET "rbutton=DarkGray"
 SET "sbutton=Green"
+SET "pmode=White"
+SET "pbutton=DarkGray"
 
 exit /B 0
 
@@ -747,18 +1020,79 @@ timeout 3 >nul
 cls
 goto :choice
 
+
+
+::#region Kill
 :Kill
+SET "pmode=red"
+SET "pbutton=red"
 SET "kbutton=red"
 SET "rbutton=cyan"
 SET "sbutton=cyan"
 SET "kbutton=red"
 SET "rbutton=cyan"
+set "pstatus= OFF"
 SET "sbutton=cyan"
 set /a "passfail=2"
+set "ktoggle=ON"
+if /I "%ktoggle%"=="ON" (
+  set "astatus=OFF "
+  set "sstatus=OFF "
+  set "lstatus=OFF "
+  set "dstatus= ON "
+  set "scolor=red"
+  set "lcolor=red"
+  set "rcolor=red"
+  set "kcolor=green"
+
+
+)
 cls
 Color 4F & MODE con:cols=80 lines=10
 Echo Requesting To Kill The Proxy...
 timeout 3 >nul
+
+
+cls
+@cd /d "%~dp0"
+if exist "prevention.config" (
+  cls
+  echo Proxy is set in Prevention Mode. reversing changes..
+  del prevention.config
+  timeout 1 >nul
+  
+  
+  set "filePath=%APPDATA%\Proxifier4\Profiles\newProxy.ppx"
+  set "tempFilePath=%temp%\temp_proxy.ppx"
+  set "errorFlag="
+
+  powershell -Command "(Get-Content -Path '%filePath%') -replace [regex]::Escape('<LeakPreventionMode enabled=\"true\" />'), '<LeakPreventionMode enabled=\"false\" />' -replace [regex]::Escape('<AutoModeDetection enabled=\"false\" />'), '<AutoModeDetection enabled=\"true\" />' -replace [regex]::Escape('<BlockNonATypes enabled=\"true\" />'), '<BlockNonATypes enabled=\"false\" />' -replace [regex]::Escape('<Udp mode=\"mode_block_all\" />'), '<Udp mode=\"mode_bypass\" />' | Set-Content -Path '%tempFilePath%'"
+
+  if %ERRORLEVEL% equ 0 (
+      move /y "%tempFilePath%" "%filePath%" >nul
+      echo Successfully restored original features.
+      timeout 2 >nul
+  ) else (
+      set "errorFlag=true"
+  )
+
+  if not defined errorFlag (
+      echo Successfully restored original features.
+      timeout 2 >nul
+      taskkill /F /IM Proxifier.exe
+      call :startp
+
+  ) else (
+      echo Encountered an error while restoring original features.
+      timeout 5 >nul
+  )
+
+
+)
+cd /d "%original_dir%"
+
+
+
 if exist "%sysProxyconfig%" (
   cls
   echo Attempting System Request to remove global proxy..
@@ -774,6 +1108,8 @@ if exist "%sysProxyconfig%" (
   
 )
 :Retrunkill
+
+
 tasklist /FI "IMAGENAME eq Proxifier.exe" 2>NUL | find /I /N "Proxifier.exe">NUL
 if "%ERRORLEVEL%"=="0" (
   taskkill /F /IM Proxifier.exe
@@ -793,7 +1129,7 @@ timeout 3 >nul
 goto choice
 
 
-
+::#endregion
 
 
 
@@ -908,6 +1244,16 @@ for /f "tokens=1,2 delims=_" %%a in (config.sahi) do (
 start "" %%a
 )
 exit /B 0
+
+:startp
+@cd /d "%~dp0"
+for /f "tokens=1,2 delims=_" %%a in (config.sahi) do (
+start "" %%b
+)
+exit /B 0
+
+
+
 
 :gecho
 @cd /d "%~dp0"
@@ -1096,7 +1442,7 @@ set HEX=0123456789ABCDEF
 call set hexcolors=%%HEX:~%rand1%,1%%%%HEX:~%rand2%,1%%
 color %hexcolors%
 echo ***********************************************************************************************************************
-echo *********************************               Proxy Manager  v3.69     **********************************************
+echo *********************************               Proxy Manager  v5.1.2v   **********************************************
 echo ****************************************     Copyright (c) 2023 SahiDemon      ****************************************
 echo ***********************************************************************************************************************
 echo.
@@ -1111,7 +1457,7 @@ echo                             __-                /     \
 echo                 _______-----    ___--          \    /)\
 echo           ------_______      ---____            \__/  / 
 echo                        -----__    \ --    _          /\        
-echo                               --__--__     \_____/   \_/\                                Software By SahiDemon 3.69v
+echo                               --__--__     \_____/   \_/\                                Software By SahiDemon 5.1.2v
 echo                                       ---^|   /          ^|     
 echo                                          ^| ^|___________^|     _____       __    _ ____     
 echo                                          ^| ^| ((_(_)^| )_)    / ___/____ _/ /_  (_) __ \___  ____ ___  ____  ____ 
@@ -1196,7 +1542,7 @@ cls
 %Clear:#=8%{str4} 
 %Clear:#=4%{str3}
 %Write:#=0%{"                                         "}{str3}
-%Write:#=15%{"Proxy Manager 3.69V \n"}{str1}{38;2;0;191;255}
+%Write:#=15%{"Proxy Manager 5.1.2V \n"}{str1}{38;2;0;191;255}
 %Write:#=0%{"                                                                                                                        "}{str3}
 %Write:#=0%{"                    "}{str3}
 %Write:#=7%{"I'M EXCITED TO SHARE AN ADVANCED SCRIPT THAT I PERSONALLY DEVELOPED\n"{str1}{38;2;253;114;114}
@@ -1227,5 +1573,5 @@ cls
 %Write:#=15%{"SAHIDEMON\n"}{str1}{38;2;21;254;66} /s
 %Write:#=0%{"                                             "}{str3}
 %Write:#=7%{"END OF CREDITS.\n"}{str3}
-@pause>nul& start "" "https://paypal.me/SahinduGayanuka?country.x=PH&locale.x=en_US" & goto :choice& :::::
+@pause>nul& start "" "https://www.buymeacoffee.com/sahindu" & goto :choice& :::::
 
