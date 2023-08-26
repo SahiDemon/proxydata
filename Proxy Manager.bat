@@ -1009,6 +1009,7 @@ SET "kill=white"
 SET "restart=White"
 SET "pmode=White"
 SET "pbutton=red"
+
 @REM SET "kbutton=red"
 @REM SET "rbutton=red"
 @REM SET "sbutton=green"
@@ -1055,6 +1056,14 @@ SET "rbutton=DarkGray"
 SET "sbutton=Green"
 SET "pmode=White"
 SET "pbutton=DarkGray"
+set "astatus=IDLE"
+set "sstatus=IDLE"
+set "lstatus=IDLE"
+set "dstatus=IDLE"
+set "kcolor=Grey"
+set "scolor=grey"
+Set "rcolor=grey"
+Set "lcolor=grey"
 
 exit /B 0
 
