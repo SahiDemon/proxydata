@@ -523,7 +523,7 @@ call gecho "                 |      <Cyan>[1]</> Maintenance Mode               
 echo                  ^|                                                               ^|
 call gecho "                 |      <Cyan>[2]</> Re-Set Config                                        |"
 echo                  ^|                                                               ^|
-call gecho "                 |      <Cyan>[3]</> WIP                                                  |"
+call gecho "                 |      <Cyan>[3]</> Restart                                              |"
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^|
 call gecho "                 |      <red>[4]</> WIP                                 <Cyan>[9]</> Refresh      |"
@@ -545,9 +545,19 @@ if errorlevel  7 goto :Credits
 if errorlevel  6 goto :callreload
 if errorlevel  5 goto :WIP
 if errorlevel  4 goto :WIP
-if errorlevel  3 goto :WIP
+if errorlevel  3 goto :restartscript
 if errorlevel  2 goto :reset
 if errorlevel  1 goto :maintain
+
+
+
+:restartscript
+cls
+Color 04 & MODE con:cols=120 lines=10
+echo Restarting the script..
+timeout 2 >nul
+start "" "%~dpnx0"
+exit
 
 
 
