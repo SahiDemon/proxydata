@@ -39,6 +39,9 @@ if exist "Maintanace.config" (
   color 04
   echo Skipping All Processes Due to Maintanace Mode
   title Maintanace Mode - Proxy Manager
+  set "toggle=ON"
+  set "main=ON "
+  set "mcolor=Green"
   timeout 3 >nul
   goto :callreload
 )
