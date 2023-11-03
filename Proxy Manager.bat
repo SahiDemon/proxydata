@@ -2,7 +2,7 @@
 
 @echo off
 call proxyintro.bat
-set "WindowTitle=Proxy Manager 5.1.2v"
+set "WindowTitle=Proxy Manager 6.0v"
 
 :: Activate the window by its title
 powershell -Command "$app = (Get-Process | Where-Object {$_.MainWindowTitle -match '%WindowTitle%'}); if ($app) {$app | ForEach-Object { $handle = $_.MainWindowHandle; [Microsoft.VisualBasic.Interaction]::AppActivate($handle) } }"
@@ -10,9 +10,10 @@ powershell -Command "$app = (Get-Process | Where-Object {$_.MainWindowTitle -mat
 @setlocal enableextensions
 @cd /d "%~dp0"
 set "original_dir=%cd%"
-SET /a "St=0"
+SET /a "St=1"
 set /a "forced=0"
 set "main=OFF"
+set "portfine=true"
 set "astatus=IDLE"
 set "sstatus=IDLE"
 set "lstatus=IDLE"
@@ -21,6 +22,9 @@ set "kcolor=Grey"
 set "scolor=grey"
 Set "rcolor=grey"
 Set "lcolor=grey"
+Set "portfine=true"
+Set "timefine=true"
+Set "notdef=true"
 set soundConfigFile=sound.config
 set sysProxyconfig=sysProxy.config
 SET /a "passfail=0"
@@ -30,7 +34,7 @@ echo %iconBase64% ^| base64 -d > %temp%\icon.ico
 Set "DownSpeed=Download: On Standby"
 set "Latecy=Latency:  Standby"
 Color 3F & MODE con:cols=80 lines=7
-title Proxy Manager 5.1.2v
+title Proxy Manager 6.0v
 
 cls
 @cd /d "%~dp0"
@@ -527,10 +531,10 @@ echo                  ^|                                                        
 call gecho "                 |      <Cyan>[3]</> Restart                                              |"
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^|
-call gecho "                 |      <red>[4]</> WIP                                 <Cyan>[9]</> Refresh      |"
+call gecho "                 |      <red>[4]</> Debug Mode                          <Cyan>[9]</> Refresh      |"
 echo                  ^|      ___________________________________________________      ^|
 echo                  ^|                                                               ^|
-call gecho "                 |      <red>[5]</> WIP                                 <Cyan>[7]</> Donate       |"
+call gecho "                 |      <red>[5]</> Force Update                        <Cyan>[7]</> Donate       |"
 echo                  ^|      ___________________________________________________      ^| 
 echo                  ^|                                                               ^|
 call gecho "                 |      <Cyan>[6]</> Home                                <Cyan>[8]</> Exit         |"
@@ -544,8 +548,8 @@ if errorlevel  9 goto :devcall
 if errorlevel  8 goto :exit
 if errorlevel  7 goto :Credits
 if errorlevel  6 goto :MainMenuon
-if errorlevel  5 goto :WIP
-if errorlevel  4 goto :WIP
+if errorlevel  5 goto :ConnectionFine
+if errorlevel  4 goto :debugcall
 if errorlevel  3 goto :restartscript
 if errorlevel  2 goto :reset
 if errorlevel  1 goto :maintain
@@ -554,7 +558,7 @@ if errorlevel  1 goto :maintain
 
 :restartscript
 cls
-Color 04 & MODE con:cols=120 lines=10
+Color 04 & MODE con:cols=80 lines=10
 echo Restarting the script..
 timeout 2 >nul
 start "" "%~dpnx0"
@@ -683,6 +687,7 @@ if /I "%ptoggle%"=="ON" (
 )
 SET "pmode=green"
 SET "pbutton=green"
+SET "sbutton=red"
 cls
 Color 3F & MODE con:cols=80 lines=7
 echo Make sure to kill the proxy before exiting the script! 
@@ -727,7 +732,38 @@ if "%ERRORLEVEL%"=="1" (
 )
 call :startp
 timeout 3 >nul
-goto :callreload
+:checkprev
+Color 3F & MODE con:cols=80 lines=7
+cls
+setlocal enabledelayedexpansion
+
+set "sentences[1]=Grabbing our virtual tools and giving the proxy a quick digital once-over."
+set "sentences[2]=Riding code waves to spot any glitches in the proxy's digital jungle."
+set "sentences[3]=Snapping data pics to keep the proxy's tech style on point."
+set "sentences[4]=Digital campfire chat to make sure the proxy's feeling byte-tastic."
+set "sentences[5]=Dancing through code to check if the proxy's in sync with the tech beat."
+set "sentences[6]=Keeping our tech poker faces on while analyzing the proxy's digital demeanor."
+set "sentences[7]=Tech sheriffs ensuring the proxy state stays glitch-free."
+set "sentences[8]=Giving scores for the proxy's coding charisma on our tech reality show."
+set "sentences[9]=Pampering the proxy with digital relaxation, keeping its state zen."
+
+set /a "randomIndex=!random! %% 9 + 1"
+
+echo !sentences[%randomIndex%]!
+
+endlocal
+goto :networkcheck
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -857,15 +893,16 @@ Color 3F & MODE con:cols=80 lines=7
 cls
 setlocal enabledelayedexpansion
 
-set "sentences[1]=Grabbing our virtual tools and giving the proxy a quick digital once-over."
-set "sentences[2]=Riding code waves to spot any glitches in the proxy's digital jungle."
-set "sentences[3]=Snapping data pics to keep the proxy's tech style on point."
-set "sentences[4]=Digital campfire chat to make sure the proxy's feeling "byte"-tastic."
-set "sentences[5]=Dancing through code to check if the proxy's in sync with the tech beat."
-set "sentences[6]=Keeping our tech poker faces on while analyzing the proxy's digital demeanor."
-set "sentences[7]=Tech sheriffs ensuring the proxy state stays glitch-free."
-set "sentences[8]=Giving scores for the proxy's coding charisma on our tech reality show."
-set "sentences[9]=Pampering the proxy with digital relaxation, keeping its state zen."
+set "sentences[1]=Checking proxy status: Virtually tooling up for inspection."
+set "sentences[2]=Surfing code waves to unveil glitches in the digital proxy's jungle."
+set "sentences[3]=Capturing data snapshots to refine the proxy's tech aesthetics."
+set "sentences[4]=Gathering around the digital campfire for a byte-tastic proxy chat."
+set "sentences[5]=Grooving through the code, ensuring the proxy syncs with the tech rhythm."
+set "sentences[6]=Maintaining tech poker faces while dissecting the proxy's digital demeanor."
+set "sentences[7]=Serving as tech sheriffs, safeguarding a glitch-free proxy state."
+set "sentences[8]=Scoring the proxy's coding charisma on our tech reality show."
+set "sentences[9]=Indulging the proxy in a digital spa, preserving its Zen-like state."
+
 
 set /a "randomIndex=!random! %% 9 + 1"
 
@@ -873,10 +910,13 @@ echo !sentences[%randomIndex%]!
 
 endlocal
 timeout 3 >nul
+
 :retry
+
 tasklist /FI "IMAGENAME eq v2rayN.exe" 2>NUL | find /I /N "v2rayN.exe">NUL
-if "%ERRORLEVEL%"=="1" goto noded
+if "%ERRORLEVEL%"=="1" goto :noded
 goto :networkcheck
+
 
 :noded
 timeout 5 >nul
@@ -907,70 +947,65 @@ timeout 3 >nul
 )
 set "pass=^|"
 if /I "%St%" == "0" set "count=3"
-if /I "%St%" == "1" set "count=5"
+if /I "%St%" == "1" set "count=3"
 if /I "%St%" == "2" set "count=3"
 FOR /F "tokens=* USEBACKQ" %%F IN (`httping.exe -count %count% -url https://github.com`) DO (
 SET var=%%F
 SET "new=All probes failed"
+set  "notdef=false"
 )
 if /I "%var%" == "%new%"  goto :failcheck
 goto pass
 
 
 
-:ping
+@REM :ping
 
-cls
-set /P c= type out a typo do like to ping?
-color 0f & MODE con:cols=120 lines=25
-@echo on
-httping.exe -count 5 -url %c%
-@echo off
-pause
-set "pass=^|"
-C:
-FOR /F "tokens=* USEBACKQ" %%F IN (`httping.exe -count 2 -url %c%`) DO (
-SET var=%%F
-SET "new=All probes failed"
-)
-if /I "%var%" == "%new%"  goto :failping
-goto done
+@REM cls
+@REM set /P c= type out a typo do like to ping?
+@REM color 0f & MODE con:cols=120 lines=25
+@REM @echo on
+@REM httping.exe -count 5 -url %c%
+@REM @echo off
+@REM pause
+@REM set "pass=^|"
+@REM C:
+@REM FOR /F "tokens=* USEBACKQ" %%F IN (`httping.exe -count 2 -url %c%`) DO (
+@REM SET var=%%F
+@REM SET "new=All probes failed"
+@REM )
+@REM if /I "%var%" == "%new%"  goto :failping
+@REM goto done
 
-:done
-@echo off
-color 70  & mode con:cols=80 lines=10
-cls
-Echo Ping Sucuess! Redirecting to main menu..
-timeout 3 >nul
-goto :choice
-
-
+@REM :done
+@REM @echo off
+@REM color 70  & mode con:cols=80 lines=10
+@REM cls
+@REM Echo Ping Sucuess! Redirecting to main menu..
+@REM timeout 3 >nul
+@REM goto :choice
 
 
-:failping
-@echo off
-color 70  & mode con:cols=80 lines=10
-cls
-Echo Ping Failed or type a correct typo! Redirecting to main menu..
-timeout 3 >nul
-goto :choice
+
+
+@REM :failping
+@REM @echo off
+@REM color 70  & mode con:cols=80 lines=10
+@REM cls
+@REM Echo Ping Failed or type a correct typo! Redirecting to main menu..
+@REM timeout 3 >nul
+@REM goto :choice
 
 ::#endregion
 ::#region Fails and Debugging
 
 :failcheck
 cls
-echo Proxy Failed! Debugging In Progress!
+echo Proxy Failed! Debugging In Progress...
 Echo Requesting To Restarting The Proxy...
 timeout 3 >nul
 if /I "%St%" == "1" (
-    cls
-    echo Checking for problems with windows time
-    net stop w32time
-    w32tm /unregister
-    w32tm /register
-    net start w32time
-    w32tm /resync
+  call :debugtest
 )
 if /I "%St%" == "2"  goto :stop
 TASKKILL /F /IM Proxifier.exe
@@ -984,6 +1019,42 @@ goto retry
 
 
 
+:debugtest
+cls
+echo Checking for problems with windows time
+set "timefine=true"
+net stop w32time
+w32tm /unregister
+w32tm /register
+net start w32time
+w32tm /resync
+cls
+echo Checking for problems with listening Ports
+for /f "delims=" %%G in ('powershell -Command "[xml]$xmlContent = Get-Content 'C:\Users\gsahi\AppData\Roaming\Proxifier4\Profiles\newProxy.ppx'; $port = $xmlContent.ProxifierProfile.ProxyList.Proxy.Port; $port"') do set "port=%%G"
+set "filePath=c:\Users\gsahi\ProxyManager\v2rayN-Core\guiNConfig.json"
+for /f "usebackq delims=" %%G in ("%filePath%") do set "jsonContent=%%G"
+for /f "delims=" %%G in ('powershell.exe -Command "$jsonContent = Get-Content -Path '%filePath%' -Raw; $jsonObject = $jsonContent | ConvertFrom-Json; $jsonObject.inbound[0].localPort"') do set "localPort=%%G"
+@REM echo Port number is %port%
+@REM echo Port number is %localPort%
+
+:portcheck
+if "%port%"=="%localPort%" (
+    echo "No issues with listening ports"
+    exit /B 0
+) else (
+    cls
+    set "portfine=false"
+    echo "Found Problems with listening port. Resolving Issues.."
+    goto :fixport
+)
+
+
+:fixport
+set /a "port=10808"
+powershell -Command "(Get-Content -Path 'C:\Users\gsahi\AppData\Roaming\Proxifier4\Profiles\newProxy.ppx') -replace '<Port>\d+</Port>', '<Port>%port%</Port>' | Set-Content -Path 'C:\Users\gsahi\AppData\Roaming\Proxifier4\Profiles\newProxy.ppx'"
+powershell.exe -ExecutionPolicy Bypass -Command "((Get-Content -Path 'C:\Users\gsahi\ProxyManager\v2rayN-Core\guiNConfig.json' -Raw) -replace '\"localPort\": \d+', '\"localPort\": %port%') | Set-Content -Path 'C:\Users\gsahi\ProxyManager\v2rayN-Core\guiNConfig.json'"
+
+goto :portcheck
 
 
 :pass
@@ -991,10 +1062,159 @@ color B0
 cls
 set /a "passfail=1"
 call :soundscucess
-echo Proxy Success! Redirecting to Menu
+
+
+cls
+setlocal enabledelayedexpansion
+
+
+set "proxysuccess[1]=Verified! the proxy's pulse: It's all systems go."
+set "proxysuccess[2]=Proxy check: It's not napping, we're good!"
+set "proxysuccess[3]='Proxy, are you awake?' Yep, it's alive and kicking!"
+set "proxysuccess[4]=Ensured. the proxy's not on vacation check!."
+set "proxysuccess[5]=Proxy in action: No funny business here!"
+set "proxysuccess[6]=Ensured! the proxy's not taking a coffee break in cyberspace : all clear."
+set "proxysuccess[7]='Proxy, still with us?' A firm nod from the digital realm!"
+set "proxysuccess[8]=No proxy shenanigans detected, WE'RE SECURE!"
+set "proxysuccess[9]=Confirmed the proxy's on the job : THUMBS UP!"
+
+set /a "randomIndex=!random! %% 9 + 1"
+
+echo !proxysuccess[%randomIndex%]!
+
 Set "DownSpeed=Determining speed.."
 timeout 4 >nul
 goto stopcome
+
+
+
+
+
+@REM ! need to add config selector and fix rest
+
+:debugcall
+:Debug
+cls 
+color 07 & mode con:cols=98 lines=36
+echo:  
+echo:                                           
+echo                   _______________________________________________________________
+echo                  ^|                                                               ^| 
+echo                  ^|                                                               ^|
+echo                  ^|                                                               ^|
+echo                  ^|             	   	                                         ^|
+if /I "%passfail%" == "0" call :nochoice
+if /I "%passfail%" == "1" call :passchoice
+if /I "%passfail%" == "2" call :failchoice  
+echo                  ^|      ___________________________________________________      ^|
+echo                  ^|                                                               ^| 
+call gecho "                 |     <red> Debug Menu </>                                              |"
+echo                  ^|      ___________________________________________________      ^|
+echo                  ^|                                                               ^| 
+call gecho "                 |      <Cyan>[1]</> Add a server                                         |"
+echo                  ^|                                                               ^|
+call gecho "                 |      <Cyan>[2]</> Force-Continue                                       |"
+echo                  ^|                                                               ^|
+call gecho "                 |      <Cyan>[3]</> Re-check                                             |"
+echo                  ^|      ___________________________________________________      ^|
+echo                  ^|     ^|  Troubleshoot info                                ^|     ^|
+call :portask
+call :timeask
+call :serverask
+echo                  ^|     ^|                                                   ^|     ^|
+echo                  ^|     ^|_________________________________________________ _^|     ^| 
+echo                  ^|                                                               ^|
+call gecho "                 |      <Cyan>[4]</> Refresh                             <Cyan>[5]</> Home         |"
+echo                  ^|                                                               ^|
+echo                  ^|                                                               ^|
+echo                  ^|_______________________________________________________________^|
+echo:          
+choice /C:12345 /N /t 10 /D 4 /M ">                   Enter Your Choice in the Keyboard [1,2,3,4,5,6,7,8,9] : "    
+
+@REM if errorlevel  9 goto :devcall
+@REM if errorlevel  8 goto :exit
+@REM if errorlevel  7 goto :Credits
+@REM if errorlevel  6 goto :MainMenuon
+if errorlevel  5 goto :warn
+if errorlevel  4 goto :Debug
+if errorlevel  3 goto :check
+if errorlevel  2 goto :warn
+if errorlevel  1 goto :add
+@REM  !done only porrt ask
+
+
+:addserver
+
+
+
+
+:warn
+Color 04 & MODE con:cols=80 lines=10
+cls
+echo Warning! Things may not work as intended.
+timeout 4 >nul
+choice /C YN /M "Do you want to proceed?:"
+if errorlevel 2 goto :debugcall
+if errorlevel 1 goto :callreload
+goto :callreload
+
+
+
+
+
+
+:timeask
+if /I "%timefine%" == "true" (
+  call Gecho "                 |     |<green>      No time issues found                         </>|     |"
+  set "time=0"
+) else (
+  call Gecho "                 |     |<red>      time issues found and fixes attempted        </>|     |"
+)
+exit /B 0
+:portask
+if /I "%portfine%" == "false" (
+  call Gecho "                 |     |<red>      Port issues found and fixed attempted       </>|     |"
+) else (
+  call Gecho "                 |     |<green>      No Port issues found                         </>|     |"
+  set "port=0"
+)
+exit /B 0
+
+:serverask
+if "%port%"=="0" (
+  if "%time%"=="0" (
+    if "%notdef%"=="true" (
+      call Gecho "                 |     |      Server Status is not defined                 |     |"
+    ) else (
+      call Gecho "                 |     |<red>      Issues found in Proxy server                 </>|     |"
+    )
+  ) else (
+      call Gecho "                 |     |      Server Status is not defined                 |     |"
+  )
+)
+exit /B 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ::#endregion
 ::#region Extra Calls/Colors 
@@ -1222,14 +1442,138 @@ timeout 3 >nul
 Exit
 
 :add
+
 cls
-Color 4F & MODE con:cols=80 lines=10
-call :startv
-TASKKILL /F /IM Proxifier.exe
-start "" "https://www.racevpn.com/free-vmesswebsocket-server"
-echo Redirecting to weblink using your browser
+Color 02 & MODE con:cols=80 lines=10
+echo Optimzing the session
 timeout 3 >nul
+:configselc
 cls
+echo Let's add your server!
+timeout 1 >nul
+echo Add your config file in the prompt window!
+timeout 2 >nul
+Echo Select Server File Here!
+set cmd=Add-Type -AssemblyName System.Windows.Forms;$f=new-object Windows.Forms.OpenFileDialog;$f.InitialDirectory=[environment]::GetFolderPath('Desktop');$f.Filter='sahi(*.config)^|*.config^|All Files(*.*)^|*.*';$f.Multiselect=$true;[void]$f.ShowDialog();if($f.Multiselect){$f.FileNames}else{$f.FileName}
+set pwshcmd=powershell -noprofile -command "&{%cmd%}"
+for /f "tokens=* delims=" %%I in ('%pwshcmd%') do call :sum1 "%%I" ret
+pause
+:sum1 
+echo File Selected: "%~1"
+set File1=%File1% "%~1"
+set ret=%File1%
+
+REM Check if the selected file is guiNConfig.json
+set "selectedFile=%~1"
+if /I "%selectedFile:~-11%" EQU "sahi.config" (
+    
+    echo Requirements Satisfied! File Accepted.
+    timeout 3 >nul
+    goto :next
+) else (
+    echo File Rejected. Does not meet Requirements.
+    
+    timeout 3 >nul
+    cls
+    echo Try adding the file again
+    timeout 3 >nul
+    goto :ask
+    
+)
+:ask
+set /P o=   Wanna try again (Y/N)?
+if /I "%o%" EQU "Y" goto :configselc
+if /I "%o%" EQU "N" goto :abort
+
+
+
+:next
+setlocal enabledelayedexpansion
+
+set "remark="
+
+for /f "usebackq tokens=*" %%a in ("%selectedFile%") do (
+    set "line=%%a"
+    if "!line:remarks=!" neq "!line!" (
+        for /f "tokens=2 delims=:," %%b in ("!line!") do (
+            set "remark=%%~b"
+            goto :print_remark
+        )
+    )
+)
+cls
+:print_remark
+cls
+set "remark=!remark:"=!"
+echo !remark!
+endlocal
+
+
+set /P o=   Is this your registered email adress (Y/N)?
+if /I "%o%" EQU "Y" goto :adding
+if /I "%o%" EQU "N" goto :ask
+
+
+
+
+
+:adding
+cls
+Echo Proxy Server adding in progress..
+set "destinationFolder=%userprofile%\ProxyManager\v2rayN-Core"
+
+:: Terminate applications if they are running
+echo searching for appliations to add the config
+tasklist /FI "IMAGENAME eq Proxifier.exe" | find /i "Proxifier.exe" >nul
+if "%errorlevel%" EQU "0" (
+    echo Terminating Proxifier.exe...
+    taskkill /F /IM Proxifier.exe >nul 2>&1
+    timeout 2 >nul
+)
+
+tasklist /FI "IMAGENAME eq v2rayN.exe" | find /i "v2rayN.exe" >nul
+if "%errorlevel%" EQU "0" (
+    echo Terminating v2rayN.exe...
+    taskkill /F /IM v2rayN.exe >nul 2>&1
+    timeout 2 >nul
+)
+
+:restart01
+echo copying required files..
+
+:: Rename the selected file to guiNConfig.json
+
+:: Move and replace the file
+del "%destinationFolder%\guiNConfig.json"
+move /Y "%selectedFile%" "%destinationFolder%" >nul 2>&1
+ren "%destinationFolder%\sahi.config" guiNConfig.json
+
+
+
+timeout 2 >nul
+if "%errorlevel%" NEQ "0" (
+    echo Error occurred while moving the file.
+    pause
+    exit /b
+)
+
+echo File moved successfully.
+timeout 2 >nul
+
+echo.
+echo Server added successfully!
+timeout 5 >nul
+goto :check
+
+:abort
+cls
+Echo Process canceled by the user!
+goto :stopcome
+
+
+
+
+
 goto :loopstart
 
 
@@ -1274,13 +1618,13 @@ goto :check
 set /a "passfail=2"
 Color 4F & MODE con:cols=80 lines=10
 Echo All Debugging Attemps Failed! 
-Echo Try adding a new server to your Proxy
+Echo Redirecting to debug menu..
 call :soundfail
 timeout 5 >nul
-cls
-start "" "https://www.racevpn.com/free-vmesswebsocket-server"
 TASKKILL /F /IM Proxifier.exe
-goto :loopstart
+TASKKILL /F /IM v2rayN.exe
+cls
+goto :debug
 
 :Restart
 TASKKILL /F /IM Proxifier.exe
@@ -1485,7 +1829,7 @@ set HEX=0123456789ABCDEF
 call set hexcolors=%%HEX:~%rand1%,1%%%%HEX:~%rand2%,1%%
 color %hexcolors%
 echo ***********************************************************************************************************************
-echo *********************************               Proxy Manager  v5.1.2v   **********************************************
+echo *********************************               Proxy Manager  v6.0v   ************************************************
 echo ****************************************     Copyright (c) 2023 SahiDemon      ****************************************
 echo ***********************************************************************************************************************
 echo.
@@ -1500,7 +1844,7 @@ echo                             __-                /     \
 echo                 _______-----    ___--          \    /)\
 echo           ------_______      ---____            \__/  / 
 echo                        -----__    \ --    _          /\        
-echo                               --__--__     \_____/   \_/\                                Software By SahiDemon 5.1.2v
+echo                               --__--__     \_____/   \_/\                                Software By SahiDemon 6.0v
 echo                                       ---^|   /          ^|     
 echo                                          ^| ^|___________^|     _____       __    _ ____     
 echo                                          ^| ^| ((_(_)^| )_)    / ___/____ _/ /_  (_) __ \___  ____ ___  ____  ____ 
@@ -1585,7 +1929,7 @@ cls
 %Clear:#=8%{str4} 
 %Clear:#=4%{str3}
 %Write:#=0%{"                                         "}{str3}
-%Write:#=15%{"Proxy Manager 5.1.2V \n"}{str1}{38;2;0;191;255}
+%Write:#=15%{"Proxy Manager 6.0v \n"}{str1}{38;2;0;191;255}
 %Write:#=0%{"                                                                                                                        "}{str3}
 %Write:#=0%{"                    "}{str3}
 %Write:#=7%{"I'M EXCITED TO SHARE AN ADVANCED SCRIPT THAT I PERSONALLY DEVELOPED\n"{str1}{38;2;253;114;114}
