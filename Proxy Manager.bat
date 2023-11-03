@@ -52,7 +52,10 @@ if exist "Maintanace.config" (
 
 
 
-echo Checking the Environment..
+
+ipconfig /flushdns
+cls
+echo Initializing the Environment..
 setlocal
 
 REM Check if Proxifier is running
