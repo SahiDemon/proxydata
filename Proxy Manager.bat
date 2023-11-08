@@ -2,7 +2,7 @@
 
 @echo off
 call proxyintro.bat
-set "WindowTitle=Proxy Manager 6.0v"
+set "WindowTitle=Proxy Manager 6.1v"
 
 :: Activate the window by its title
 powershell -Command "$app = (Get-Process | Where-Object {$_.MainWindowTitle -match '%WindowTitle%'}); if ($app) {$app | ForEach-Object { $handle = $_.MainWindowHandle; [Microsoft.VisualBasic.Interaction]::AppActivate($handle) } }"
@@ -34,7 +34,7 @@ echo %iconBase64% ^| base64 -d > %temp%\icon.ico
 Set "DownSpeed=Download: On Standby"
 set "Latecy=Latency:  Standby"
 Color 3F & MODE con:cols=80 lines=7
-title Proxy Manager 6.0v
+title Proxy Manager 6.1v
 
 cls
 @cd /d "%~dp0"
