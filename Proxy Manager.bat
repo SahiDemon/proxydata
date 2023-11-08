@@ -1824,6 +1824,7 @@ exit /B 0
 
 
 
+
 ::#endregion
 ::#region Credits
 :Credits
@@ -1833,7 +1834,7 @@ set HEX=0123456789ABCDEF
 call set hexcolors=%%HEX:~%rand1%,1%%%%HEX:~%rand2%,1%%
 color %hexcolors%
 echo ***********************************************************************************************************************
-echo *********************************               Proxy Manager  v6.0.0v   **********************************************
+echo *********************************               Proxy Manager     *****************************************************
 echo ****************************************     Copyright (c) 2023 SahiDemon      ****************************************
 echo ***********************************************************************************************************************
 echo.
@@ -1848,7 +1849,7 @@ echo                             __-                /     \
 echo                 _______-----    ___--          \    /)\
 echo           ------_______      ---____            \__/  / 
 echo                        -----__    \ --    _          /\        
-echo                               --__--__     \_____/   \_/\                                Software By SahiDemon 6.0.0v
+echo                               --__--__     \_____/   \_/\                                Software By SahiDemon 
 echo                                       ---^|   /          ^|     
 echo                                          ^| ^|___________^|     _____       __    _ ____     
 echo                                          ^| ^| ((_(_)^| )_)    / ___/____ _/ /_  (_) __ \___  ____ ___  ____  ____ 
@@ -1933,7 +1934,7 @@ cls
 %Clear:#=8%{str4} 
 %Clear:#=4%{str3}
 %Write:#=0%{"                                         "}{str3}
-%Write:#=15%{"Proxy Manager 6.0.0V \n"}{str1}{38;2;0;191;255}
+%Write:#=15%{"Proxy Manager\n"}{str1}{38;2;0;191;255}
 %Write:#=0%{"                                                                                                                        "}{str3}
 %Write:#=0%{"                    "}{str3}
 %Write:#=7%{"I'M EXCITED TO SHARE AN ADVANCED SCRIPT THAT I PERSONALLY DEVELOPED\n"{str1}{38;2;253;114;114}
@@ -1965,4 +1966,3 @@ cls
 %Write:#=0%{"                                             "}{str3}
 %Write:#=7%{"END OF CREDITS.\n"}{str3}
 @pause>nul& start "" "https://www.buymeacoffee.com/sahindu" & goto :choice& :::::
-
