@@ -1965,4 +1965,7 @@ cls
 %Write:#=15%{"SAHIDEMON\n"}{str1}{38;2;21;254;66} /s
 %Write:#=0%{"                                             "}{str3}
 %Write:#=7%{"END OF CREDITS.\n"}{str3}
-@pause>nul& start "" "https://www.buymeacoffee.com/sahindu" & goto :choice& :::::
+endlocal
+@pause>nul
+start "" "https://www.buymeacoffee.com/sahindu"
+goto :choice
