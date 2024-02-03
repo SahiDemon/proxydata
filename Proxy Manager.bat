@@ -3,7 +3,7 @@
 @echo off
 call proxyintro.bat
 set "WindowTitle=Proxy Manager 6.1v"
-set "version=8.1"
+set "version=6.1"
 
 
 :: Activate the window by its title
