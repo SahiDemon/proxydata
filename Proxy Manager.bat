@@ -3,6 +3,8 @@
 @echo off
 call proxyintro.bat
 set "WindowTitle=Proxy Manager 6.1v"
+set "version=8.1"
+
 
 :: Activate the window by its title
 powershell -Command "$app = (Get-Process | Where-Object {$_.MainWindowTitle -match '%WindowTitle%'}); if ($app) {$app | ForEach-Object { $handle = $_.MainWindowHandle; [Microsoft.VisualBasic.Interaction]::AppActivate($handle) } }"
