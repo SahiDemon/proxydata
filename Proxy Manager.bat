@@ -3,8 +3,6 @@
 @echo off
 call proxyintro.bat
 set "WindowTitle=Proxy Manager 6.1v"
-set "version=6.1"
-
 
 :: Activate the window by its title
 powershell -Command "$app = (Get-Process | Where-Object {$_.MainWindowTitle -match '%WindowTitle%'}); if ($app) {$app | ForEach-Object { $handle = $_.MainWindowHandle; [Microsoft.VisualBasic.Interaction]::AppActivate($handle) } }"
@@ -51,9 +49,6 @@ if exist "Maintanace.config" (
   timeout 3 >nul
   goto :callreload
 )
-
-
-
 
 ipconfig /flushdns
 cls
@@ -889,8 +884,8 @@ if exist "%sysProxyconfig%" (
 )
 cd /d "%original_dir%"
 set message=Initializing Proxy Applications
+timeout 1 >nul
 call :loading
-timeout 3 >nul
 
 call :startall
 :check
@@ -1035,8 +1030,8 @@ net start w32time
 w32tm /resync
 cls
 echo Checking for problems with listening Ports
-for /f "delims=" %%G in ('powershell -Command "[xml]$xmlContent = Get-Content 'C:\Users\gsahi\AppData\Roaming\Proxifier4\Profiles\newProxy.ppx'; $port = $xmlContent.ProxifierProfile.ProxyList.Proxy.Port; $port"') do set "port=%%G"
-set "filePath=c:\Users\gsahi\ProxyManager\v2rayN-Core\guiNConfig.json"
+for /f "delims=" %%G in ('powershell -Command "[xml]$xmlContent = Get-Content '%AppData%\Proxifier4\Profiles\newProxy.ppx'; $port = $xmlContent.ProxifierProfile.ProxyList.Proxy.Port; $port"') do set "port=%%G"
+set "filePath=%USERPROFILE%\ProxyManager\v2rayN-Core\guiNConfig.json"
 for /f "usebackq delims=" %%G in ("%filePath%") do set "jsonContent=%%G"
 for /f "delims=" %%G in ('powershell.exe -Command "$jsonContent = Get-Content -Path '%filePath%' -Raw; $jsonObject = $jsonContent | ConvertFrom-Json; $jsonObject.inbound[0].localPort"') do set "localPort=%%G"
 @REM echo Port number is %port%
@@ -1056,8 +1051,8 @@ if "%port%"=="%localPort%" (
 
 :fixport
 set /a "port=10808"
-powershell -Command "(Get-Content -Path 'C:\Users\gsahi\AppData\Roaming\Proxifier4\Profiles\newProxy.ppx') -replace '<Port>\d+</Port>', '<Port>%port%</Port>' | Set-Content -Path 'C:\Users\gsahi\AppData\Roaming\Proxifier4\Profiles\newProxy.ppx'"
-powershell.exe -ExecutionPolicy Bypass -Command "((Get-Content -Path 'C:\Users\gsahi\ProxyManager\v2rayN-Core\guiNConfig.json' -Raw) -replace '\"localPort\": \d+', '\"localPort\": %port%') | Set-Content -Path 'C:\Users\gsahi\ProxyManager\v2rayN-Core\guiNConfig.json'"
+powershell -Command "(Get-Content -Path '%AppData%\Proxifier4\Profiles\newProxy.ppx') -replace '<Port>\d+</Port>', '<Port>%port%</Port>' | Set-Content -Path '%AppData%\Proxifier4\Profiles\newProxy.ppx'"
+powershell.exe -ExecutionPolicy Bypass -Command "((Get-Content -Path '%USERPROFILE%\ProxyManager\v2rayN-Core\guiNConfig.json' -Raw) -replace '\"localPort\": \d+', '\"localPort\": %port%') | Set-Content -Path '%USERPROFILE%\ProxyManager\v2rayN-Core\guiNConfig.json'"
 
 goto :portcheck
 
